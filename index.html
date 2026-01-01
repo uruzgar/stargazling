@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sakarya Gece Gözlem Rehberi</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #05070a;
+            --card-bg: rgba(15, 20, 30, 0.7);
+            --accent-gold: #fbc02d;
+            --accent-blue: #4fc3f7;
+            --text-primary: #ffffff;
+            --text-secondary: #b0bec5;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(79, 195, 247, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(251, 192, 45, 0.03) 0%, transparent 40%);
+        }
+
+        /* Twinkling Stars Background */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 850px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glass Cards */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(79, 195, 247, 0.3);
+        }
+
+        .card h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card h2 span {
+            color: var(--accent-gold);
+        }
+
+        /* Weather Section */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .best-window {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(79, 195, 247, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .best-window-title {
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        /* Events List */
+        .event-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .event-date {
+            min-width: 60px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            text-align: center;
+        }
+
+        .event-date div:last-child {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .event-content h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .event-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Planet Grid */
+        .planet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .planet-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .planet-name {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--accent-blue);
+        }
+
+        .planet-status {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .visibility-badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .visible-high {
+            background: rgba(76, 175, 80, 0.2);
+            color: #81c784;
+        }
+
+        .visible-mid {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ffb74d;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-bottom: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stars-container" id="stars"></div>
+
+    <div class="container">
+        <header>
+            <h1>Gece Gözlem Rehberi</h1>
+            <p class="subtitle">Adapazarı, Sakarya (40.76° N, 30.36° E) • 2 Ocak 2026</p>
+        </header>
+
+        <div class="grid">
+            <!-- Hava Durumu Kartı -->
+            <div class="card">
+                <h2><span>☁️</span> Bulutluluk Durumu</h2>
+                <div class="chart-container">
+                    <canvas id="weatherChart"></canvas>
+                </div>
+                <div class="best-window">
+                    <div class="best-window-title">🔭 En İyi Gözlem Penceresi</div>
+                    <p id="bestWindowMsg">03:00 - 08:00 arası (Lokal Saat). Gökyüzü %100 açık olacak.</p>
+                </div>
+            </div>
+
+            <!-- Önemli Olaylar Kartı -->
+            <div class="card">
+                <h2><span>✨</span> Ocak 2026 Öne Çıkanlar</h2>
+                <div id="eventsList">
+                    <!-- Events will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Gezegenler Kartı -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2><span>🪐</span> Bu Gece Görülebilecek Gezegenler</h2>
+                <div class="planet-grid" id="planetGrid">
+                    <!-- Planets will be populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Veriler Clear Outside ve Celestron Astronomi Takvimi kullanılarak Sakarya koordinatlarına göre
+                hazırlanmıştır.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Create Stars
+        function initStars() {
+            const container = document.getElementById('stars');
+            const count = 150;
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const size = Math.random() * 2 + 1;
+                const duration = Math.random() * 3 + 2;
+                star.style.left = x + '%';
+                star.style.top = y + '%';
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.setProperty('--duration', duration + 's');
+                container.appendChild(star);
+            }
+        }
+
+        let weatherChart;
+
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                const data = await response.json();
+
+                // Update Metadata
+                if (data.last_updated) {
+                    const date = new Date(data.last_updated);
+                    document.querySelector('.subtitle').innerHTML += ` | Güncelleme: ${date.toLocaleString('tr-TR')}`;
+                }
+
+                initChart(data.weather);
+                populateEvents(data.events);
+                populatePlanets(data.planets);
+            } catch (err) {
+                console.error('Veri yüklenemedi:', err);
+                document.getElementById('bestWindowMsg').innerText = 'Hata: Veriler yüklenemedi. Lütfen data.json dosyasını kontrol edin.';
+            }
+        }
+
+        // Initialize Chart
+        function initChart(weatherData) {
+            const ctx = document.getElementById('weatherChart').getContext('2d');
+
+            // Determine best window from data
+            const best = weatherData.reduce((prev, curr) => (prev.cloud < curr.cloud) ? prev : curr);
+            document.getElementById('bestWindowMsg').innerText = `${best.hour} civarı en temiz gökyüzü (%${best.cloud} bulut).`;
+
+            if (weatherChart) weatherChart.destroy();
+
+            weatherChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: weatherData.map(d => d.hour),
+                    datasets: [{
+                        label: 'Bulutluluk (%)',
+                        data: weatherData.map(d => d.cloud),
+                        borderColor: '#4fc3f7',
+                        backgroundColor: 'rgba(79, 195, 247, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointBackgroundColor: '#4fc3f7',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: '#b0bec5' },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#b0bec5' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Populate Content
+        function populateEvents(events) {
+            const eventsCont = document.getElementById('eventsList');
+            eventsCont.innerHTML = '';
+            events.forEach(ev => {
+                eventsCont.innerHTML += `
+                    <div class="event-item">
+                        <div class="event-date">
+                            <div>${ev.date}</div>
+                            <div>${ev.month}</div>
+                        </div>
+                        <div class="event-content">
+                            <h3>${ev.title}</h3>
+                            <p>${ev.desc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function populatePlanets(planets) {
+            const planetCont = document.getElementById('planetGrid');
+            planetCont.innerHTML = '';
+            planets.forEach(p => {
+                planetCont.innerHTML += `
+                    <div class="planet-card">
+                        <div class="planet-name">${p.name}</div>
+                        <div class="planet-status">${p.status}</div>
+                        <div class="planet-status">Zirve: ${p.peak}</div>
+                        ${p.badge ? `<div class="visibility-badge ${p.class}">${p.badge}</div>` : ''}
+                    </div>
+                `;
+            });
+        }
+
+        window.onload = () => {
+            initStars();
+            loadData();
+        };
+    </script>
+</body>
+
+</html>

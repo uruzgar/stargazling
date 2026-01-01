@@ -1,0 +1,122 @@
+{
+    "last_updated": "2026-01-02T00:15:00Z",
+    "location": "Sakarya, Adapazarı",
+    "coordinates": "40.76, 30.36",
+    "weather": [
+        {
+            "hour": "23:00",
+            "cloud": 62
+        },
+        {
+            "hour": "00:00",
+            "cloud": 47
+        },
+        {
+            "hour": "01:00",
+            "cloud": 36
+        },
+        {
+            "hour": "02:00",
+            "cloud": 29
+        },
+        {
+            "hour": "03:00",
+            "cloud": 2
+        },
+        {
+            "hour": "04:00",
+            "cloud": 1
+        },
+        {
+            "hour": "05:00",
+            "cloud": 0
+        },
+        {
+            "hour": "06:00",
+            "cloud": 0
+        },
+        {
+            "hour": "07:00",
+            "cloud": 0
+        },
+        {
+            "hour": "08:00",
+            "cloud": 1
+        },
+        {
+            "hour": "09:00",
+            "cloud": 1
+        },
+        {
+            "hour": "10:00",
+            "cloud": 4
+        },
+        {
+            "hour": "11:00",
+            "cloud": 10
+        }
+    ],
+    "events": [
+        {
+            "date": "3-4",
+            "month": "Oca",
+            "title": "Quadrantid Meteor Yağmuru",
+            "desc": "Yılın ilk büyük meteor yağmuru. Saatte 100-120 meteor görülebilir."
+        },
+        {
+            "date": "3",
+            "month": "Oca",
+            "title": "Dolunay (Kurt Ayı)",
+            "desc": "Ay, Dünya'ya en yakın konumda (Perigee) olacağı için büyük görünecek."
+        },
+        {
+            "date": "10",
+            "month": "Oca",
+            "title": "Jüpiter Karşıtlığı",
+            "desc": "Jüpiter, Dünya'ya en yakın ve en parlak konumunda. Tüm gece görünür."
+        },
+        {
+            "date": "19",
+            "month": "Oca",
+            "title": "Yeni Ay",
+            "desc": "Derin uzay gözlemleri (galaksiler, nebulalar) için en iyi zaman."
+        }
+    ],
+    "planets": [
+        {
+            "name": "Jüpiter",
+            "status": "Tüm gece görünür",
+            "peak": "01:42",
+            "badge": "Mükemmel",
+            "class": "visible-high"
+        },
+        {
+            "name": "Satürn",
+            "status": "23:47'ye kadar",
+            "peak": "19:10",
+            "badge": "İyi",
+            "class": "visible-mid"
+        },
+        {
+            "name": "Uranüs",
+            "status": "03:02'ye kadar",
+            "peak": "21:30",
+            "badge": "Teleskopla",
+            "class": "visible-mid"
+        },
+        {
+            "name": "Mars",
+            "status": "Görülemez",
+            "peak": "-",
+            "badge": "Ufkun Altında",
+            "class": ""
+        },
+        {
+            "name": "Venüs",
+            "status": "Görülemez",
+            "peak": "-",
+            "badge": "Güneşe Yakın",
+            "class": ""
+        }
+    ]
+}

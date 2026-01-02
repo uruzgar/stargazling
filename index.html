@@ -477,13 +477,13 @@
         function populateDeepSky(DeepSky) {
             const DeepSkyCont = document.getElementById('DeepSkyGrid');
             DeepSkyCont.innerHTML = '';
-            DeepSkys.forEach(p => {
-                planetCont.innerHTML += `
+            DeepSkys.forEach(d => {
+                DeepSkyCont.innerHTML += `
                     <div class="DeepSky-card">
-                        <div class="DeepSky-name">${p.name}</div>
-                        <div class="DeepSky-status">${p.status}</div>
-                        <div class="DeepSky-status">Zirve: ${p.peak}</div>
-                        ${p.badge ? `<div class="visibility-badge ${p.class}">${p.badge}</div>` : ''}
+                        <div class="DeepSky-name">${d.name}</div>
+                        <div class="DeepSky-status">${d.status}</div>
+                        <div class="DeepSky-status">Zirve: ${d.peak}</div>
+                        ${d.badge ? `<div class="visibility-badge ${d.class}">${d.badge}</div>` : ''}
                     </div>
                 `;
             });
@@ -499,3 +499,4 @@
 
 
 </html>
+

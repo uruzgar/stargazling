@@ -225,6 +225,33 @@
             color: var(--text-secondary);
         }
 
+         /* DeepSky-grid */
+        .DeepSky-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .DeepSky-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .DeepSky-name {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--accent-blue);
+        }
+
+        .DeepSky-status {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
         .visibility-badge {
             display: inline-block;
             padding: 0.25rem 0.6rem;
@@ -304,6 +331,14 @@
                     <!-- Planets will be populated by JS -->
                 </div>
             </div>
+
+            <!-- Deep Sky Kartı -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <h2><span>🪐</span> Bu Gece Görülebilecek Deep Sky</h2>
+                <div class="DeepSky-grid" id="DeepSkyGrid">
+                    <!-- Planets will be populated by JS -->
+                </div>
+            </div>
         </div>
 
         <footer>
@@ -349,6 +384,7 @@
                 initChart(data.weather);
                 populateEvents(data.events);
                 populatePlanets(data.planets);
+                populateDeepSky(data.deep_sky);
             } catch (err) {
                 console.error('Veri yüklenemedi:', err);
                 document.getElementById('bestWindowMsg').innerText = 'Hata: Veriler yüklenemedi. Lütfen data.json dosyasını kontrol edin.';
@@ -438,11 +474,28 @@
             });
         }
 
+        function populateDeepSky(DeepSky) {
+            const DeepSkyCont = document.getElementById('DeepSkyGrid');
+            DeepSkyCont.innerHTML = '';
+            DeepSkys.forEach(p => {
+                planetCont.innerHTML += `
+                    <div class="DeepSky-card">
+                        <div class="DeepSky-name">${p.name}</div>
+                        <div class="DeepSky-status">${p.status}</div>
+                        <div class="DeepSky-status">Zirve: ${p.peak}</div>
+                        ${p.badge ? `<div class="visibility-badge ${p.class}">${p.badge}</div>` : ''}
+                    </div>
+                `;
+            });
+        }
+
+
         window.onload = () => {
             initStars();
             loadData();
         };
     </script>
 </body>
+
 
 </html>

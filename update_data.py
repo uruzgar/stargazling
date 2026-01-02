@@ -1,6 +1,6 @@
 import requests
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
 # --- Configurations ---
@@ -9,24 +9,51 @@ LON = "30.36"
 # In a real scenario, this script would crawl the sites. 
 # For this demonstration, we simulate the scraping logic.
 
-def fetch_weather():
-    """Simulates fetching from Clear Outside"""
-    # Note: Clear Outside often blocks generic scrapers, 
-    # but in a GitHub Action, we can use specific headers or APIs.
-    print(f"Fetching weather for {LAT}, {LON} from Clear Outside...")
-    # Mock data structure updated for the 'current' day
-    return [
-        {"hour": "18:00", "cloud": 20},
-        {"hour": "19:00", "cloud": 15},
-        {"hour": "20:00", "cloud": 5},
-        {"hour": "21:00", "cloud": 2},
-        {"hour": "22:00", "cloud": 0},
-        {"hour": "23:00", "cloud": 0},
-        {"hour": "00:00", "cloud": 0},
-        {"hour": "01:00", "cloud": 0},
-        {"hour": "02:00", "cloud": 3},
-        {"hour": "03:00", "cloud": 10}
-    ]
+"""Fetches real cloud cover data from Open-Meteo API"""
+    print(f"Fetching real weather for {LAT}, {LON} from Open-Meteo...")
+    
+    # Open-Meteo API Endpoints
+    url = "https://api.open-meteo.com/v1/forecast"
+    params = {
+        "latitude": LAT,
+        "longitude": LON,
+        "hourly": "cloud_cover", # Saatlik bulut verisi
+        "timezone": "auto",      # Konumun saat dilimini otomatik algıla
+        "forecast_days": 2       # Bugün ve yarını al (gece yarısını geçtiği için)
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status() # Hata varsa durdur
+        data = response.json()
+        
+        hourly_data = data.get("hourly", {})
+        times = hourly_data.get("time", [])
+        clouds = hourly_data.get("cloud_cover", [])
+        
+        weather_list = []
+        
+        # Şu anki saati al
+        now = datetime.now()
+        
+        # Gelen veriyi işle
+        for t_str, c_val in zip(times, clouds):
+            # API'den gelen zaman formatı: "2023-10-27T14:00"
+            dt_obj = datetime.strptime(t_str, "%Y-%m-%dT%H:%M")
+            
+            # Sadece şu andan itibaren sonraki 12 saati al (Gözlem için)
+            if now <= dt_obj < now + timedelta(hours=12):
+                weather_list.append({
+                    "hour": dt_obj.strftime("%H:%M"), # "18:00" formatına çevir
+                    "cloud": c_val # Yüzde olarak bulut oranı (0-100)
+                })
+                
+        return weather_list
+
+    except Exception as e:
+        print(f"Hata oluştu: {e}")
+        # Hata durumunda boş liste veya varsayılan değer dön
+        return []
 
 def fetch_events():
     """Simulates fetching from Celestron/In-The-Sky"""
@@ -56,3 +83,4 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+

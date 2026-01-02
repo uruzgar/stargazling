@@ -70,7 +70,7 @@ def fetch_events():
         # 'Currently visible' olanları bul
         con_list = soup.find_all('a', href=re.compile(r'constellation\.php\?id='))
         if con_list:
-            top_cons = [c.text for c in con_list[:3]] # İlk 3 takımyıldız
+            top_cons = [c.text for c in con_list[:60]] # İlk 3 takımyıldız
             events.append({
                 "date": f"{day}",
                 "month": f"{month}",
@@ -82,7 +82,7 @@ def fetch_events():
 
     # Varsayılan (Eğer hiçbir şey çekilemezse boş kalmasın)
     if not events:
-        events = [{"date": str(day), "month": "Oca", "title": "Gözlem Gecesi", "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."}]
+        events = [{"date": str(day), "month": str(month), "title": "Gözlem Gecesi", "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."}]
         
     return events
     
@@ -183,6 +183,7 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 
 
 

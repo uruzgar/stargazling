@@ -1,31 +1,22 @@
 {
-    "last_updated": "2026-01-02T14:10:15.786684",
+    "last_updated": "2026-01-02T19:46:24.224672",
     "location": "Sakarya, Adapazarı",
-    "coordinates": "40.7806, 30.4033",
-    "weather": [
-        {
-            "hour": "15:00",
-            "cloud": 0
-        },
-        {
-            "hour": "16:00",
-            "cloud": 0
-        },
-        {
-            "hour": "17:00",
-            "cloud": 12
-        },
+    "timeline": {
+        "start": "18:00",
+        "end": "06:00"
+    },
+    "weather_hourly": [
         {
             "hour": "18:00",
-            "cloud": 23
+            "cloud": 15
         },
         {
             "hour": "19:00",
-            "cloud": 1
+            "cloud": 39
         },
         {
             "hour": "20:00",
-            "cloud": 1
+            "cloud": 2
         },
         {
             "hour": "21:00",
@@ -45,21 +36,152 @@
         },
         {
             "hour": "01:00",
-            "cloud": 7
+            "cloud": 0
         },
         {
             "hour": "02:00",
-            "cloud": 20
-        }
-    ],
-    "events": [
+            "cloud": 28
+        },
         {
-            "date": "02",
-            "month": "Oca",
-            "title": "Sakin Gökyüzü",
-            "desc": "Bu gece için özel bir gök olayı kaydedilmedi. Gözlem için harika bir gece olabilir!"
+            "hour": "03:00",
+            "cloud": 0
+        },
+        {
+            "hour": "04:00",
+            "cloud": 0
+        },
+        {
+            "hour": "05:00",
+            "cloud": 0
+        },
+        {
+            "hour": "06:00",
+            "cloud": 77
         }
     ],
-    "planets": [],
-    "visibilities": []
+    "objects": [
+        {
+            "name": "Güneş",
+            "type": "star",
+            "rise": "08:24",
+            "set": "17:40",
+            "visible": true
+        },
+        {
+            "name": "Ay",
+            "type": "moon",
+            "rise": "16:23",
+            "set": "08:36",
+            "visible": true
+        },
+        {
+            "name": "Merkür",
+            "type": "planet",
+            "rise": "07:43",
+            "set": "16:46",
+            "visible": true
+        },
+        {
+            "name": "Venüs",
+            "type": "planet",
+            "rise": "08:24",
+            "set": "17:33",
+            "visible": true
+        },
+        {
+            "name": "Mars",
+            "type": "planet",
+            "rise": "08:34",
+            "set": "17:45",
+            "visible": true
+        },
+        {
+            "name": "Jüpiter",
+            "type": "planet",
+            "rise": "18:16",
+            "set": "09:03",
+            "visible": true
+        },
+        {
+            "name": "Satürn",
+            "type": "planet",
+            "rise": "12:09",
+            "set": "23:49",
+            "visible": true
+        }
+    ],
+    "iss_passes": [
+        {
+            "start": "22:55",
+            "max_elev": 41,
+            "end": "23:01"
+        },
+        {
+            "start": "00:32",
+            "max_elev": 28,
+            "end": "00:38"
+        },
+        {
+            "start": "02:11",
+            "max_elev": 13,
+            "end": "02:14"
+        },
+        {
+            "start": "03:48",
+            "max_elev": 17,
+            "end": "03:53"
+        },
+        {
+            "start": "05:24",
+            "max_elev": 65,
+            "end": "05:31"
+        },
+        {
+            "start": "07:02",
+            "max_elev": 14,
+            "end": "07:06"
+        }
+    ],
+    "lists": {
+        "naked_eye": [
+            {
+                "name": "Jüpiter",
+                "mag": -2.8
+            },
+            {
+                "name": "Sirius",
+                "mag": -1.4
+            },
+            {
+                "name": "Pleiades (M45)",
+                "mag": 1.6
+            },
+            {
+                "name": "Andromeda (M31)",
+                "mag": 3.4
+            },
+            {
+                "name": "Betelgeuse",
+                "mag": 0.5
+            }
+        ],
+        "binocular": [
+            {
+                "name": "Orion Bulutsusu (M42)",
+                "mag": 4.0
+            },
+            {
+                "name": "Arı Kovanı (M44)",
+                "mag": 3.7
+            },
+            {
+                "name": "Herkül Kümesi (M13)",
+                "mag": 5.8
+            },
+            {
+                "name": "Çift Küme (NGC 869)",
+                "mag": 3.7
+            }
+        ]
+    }
 }

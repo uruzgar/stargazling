@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sakarya Gece Gözlem Rehberi</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -17,6 +16,7 @@
             --card-bg: rgba(15, 20, 30, 0.7);
             --accent-gold: #fbc02d;
             --accent-blue: #4fc3f7;
+            --iss-red: #ff5252;
             --text-primary: #ffffff;
             --text-secondary: #b0bec5;
             --glass-border: rgba(255, 255, 255, 0.1);
@@ -39,7 +39,6 @@
                 radial-gradient(circle at 80% 70%, rgba(251, 192, 45, 0.03) 0%, transparent 40%);
         }
 
-        /* Twinkling Stars Background */
         .stars-container {
             position: fixed;
             top: 0;
@@ -73,20 +72,20 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 2rem 1rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             animation: fadeInDown 1s ease-out;
         }
 
         h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 800;
             margin-bottom: 0.5rem;
             background: linear-gradient(135deg, #fff 0%, var(--accent-blue) 100%);
@@ -97,187 +96,227 @@
 
         .subtitle {
             color: var(--text-secondary);
-            font-size: 1.1rem;
+            font-size: 1rem;
             letter-spacing: 1px;
         }
 
-        .grid {
+        /* GANTT CHART STYLES */
+        .gantt-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .gantt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .gantt-header h2 {
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-width: 800px;
+            height: 500px;
+            /* Increased height */
+            background: #0a0e17;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Dynamic Weather Background */
+
+        .weather-hour {
+            flex: 1;
+            height: 100%;
+            transition: background 0.3s;
+        }
+
+        /* Time Axis (Bottom) */
+
+        .time-label {
+            flex: 1;
+            text-align: left;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding-left: 4px;
+            line-height: 30px;
+        }
+
+        /* Objects Layer */
+        .objects-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            bottom: 30px;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            padding-top: 10px;
+        }
+
+        .object-row {
+            position: relative;
+            height: 30px;
+            /* Reduced height */
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .object-label-container {
+            width: 150px;
+            min-width: 150px;
+            padding-right: 15px;
+            text-align: right;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .object-timeline-track {
+            flex-grow: 1;
+            position: relative;
+            height: 100%;
+            /* This track now aligns perfectly with the weather background */
+        }
+
+        .object-bar {
+            position: absolute;
+            height: 8px;
+            /* Thinner bars */
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 4px;
+            background: var(--accent-blue);
+            box-shadow: 0 0 8px rgba(79, 195, 247, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .object-bar:hover {
+            height: 10px;
+            box-shadow: 0 0 12px rgba(79, 195, 247, 0.6);
+            cursor: pointer;
+        }
+
+        /* Shift chart area right - align with track */
+        .weather-bg {
+            position: absolute;
+            top: 0;
+            left: 150px;
+            /* Matches label width */
+            right: 0;
+            bottom: 0;
+            display: flex;
+            z-index: 0;
+        }
+
+        .time-axis {
+            position: absolute;
+            bottom: 0;
+            left: 150px;
+            right: 0;
+            height: 30px;
+            display: flex;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* ISS Layer - needs to match the timeline track geometry */
+        .iss-layer {
+            position: absolute;
+            top: 0;
+            left: 150px;
+            /* Offset to match chart area */
+            right: 0;
+            bottom: 30px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .iss-bar {
+            position: absolute;
+            height: 4px;
+            background: var(--iss-red);
+            box-shadow: 0 0 8px var(--iss-red);
+            border-radius: 2px;
+        }
+
+        .iss-label {
+            position: absolute;
+            top: -12px;
+            font-size: 0.65rem;
+            color: var(--iss-red);
+            white-space: nowrap;
+            transform: translateX(-50%);
+        }
+
+        /* Lists Section */
+        .lists-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
         }
 
-        @media (max-width: 850px) {
-            .grid {
+        @media (max-width: 768px) {
+            .lists-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Glass Cards */
-        .card {
+        .list-card {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 1.5rem;
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease, border-color 0.3s ease;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(79, 195, 247, 0.3);
-        }
-
-        .card h2 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .card h2 span {
+        .list-card h3 {
             color: var(--accent-gold);
+            margin-bottom: 1rem;
         }
 
-        /* Weather Section */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
+        .list-card ul {
+            list-style: none;
         }
 
-        .best-window {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: rgba(79, 195, 247, 0.1);
-            border-radius: 12px;
-            border-left: 4px solid var(--accent-blue);
+        .list-card li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+            color: var(--text-secondary);
         }
 
-        .best-window-title {
-            font-weight: 600;
-            color: var(--accent-blue);
-            margin-bottom: 0.25rem;
-        }
-
-        /* Events List */
-        .event-item {
-            display: flex;
-            gap: 1rem;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .event-item:last-child {
+        .list-card li:last-child {
             border-bottom: none;
-        }
-
-        .event-date {
-            min-width: 60px;
-            font-weight: 700;
-            color: var(--accent-gold);
-            text-align: center;
-        }
-
-        .event-date div:last-child {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
-
-        .event-content h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .event-content p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        /* Planet Grid */
-        .planet-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .planet-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .planet-name {
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--accent-blue);
-        }
-
-        .planet-status {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-         /* DeepSky-grid */
-        .DeepSky-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .DeepSky-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .DeepSky-name {
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--accent-blue);
-        }
-
-        .DeepSky-status {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .visibility-badge {
-            display: inline-block;
-            padding: 0.25rem 0.6rem;
-            border-radius: 100px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            margin-top: 0.5rem;
-            text-transform: uppercase;
-        }
-
-        .visible-high {
-            background: rgba(76, 175, 80, 0.2);
-            color: #81c784;
-        }
-
-        .visible-mid {
-            background: rgba(255, 152, 0, 0.2);
-            color: #ffb74d;
         }
 
         footer {
             text-align: center;
-            margin-top: 4rem;
-            padding-bottom: 2rem;
+            margin-top: 3rem;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         @keyframes fadeInDown {
@@ -300,195 +339,208 @@
     <div class="container">
         <header>
             <h1>Gece Gözlem Rehberi</h1>
-            <p class="subtitle">Adapazarı, Sakarya (40.76° N, 30.36° E) • 2 Ocak 2026</p>
+            <p class="subtitle">Adapazarı, Sakarya (40.76° N, 30.36° E)</p>
         </header>
 
-        <div class="grid">
-            <!-- Hava Durumu Kartı -->
-            <div class="card">
-                <h2><span>☁️</span> Bulutluluk Durumu</h2>
-                <div class="chart-container">
-                    <canvas id="weatherChart"></canvas>
-                </div>
-                <div class="best-window">
-                    <div class="best-window-title">🔭 En İyi Gözlem Penceresi</div>
-                    <p id="bestWindowMsg">03:00 - 08:00 arası (Lokal Saat). Gökyüzü %100 açık olacak.</p>
-                </div>
-            </div>
-
-            <!-- Önemli Olaylar Kartı -->
-            <div class="card">
-                <h2><span>✨</span> Ocak 2026 Öne Çıkanlar</h2>
-                <div id="eventsList">
-                    <!-- Events will be populated by JS -->
+        <!-- Custom Gantt Chart -->
+        <div class="gantt-container">
+            <div class="gantt-header">
+                <h2><span>🔭</span> Gözlem Zaman Çizelgesi (18:00 - 06:00)</h2>
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                    <span style="color:var(--iss-red)">● ISS</span> &nbsp;
+                    <span style="color:var(--accent-blue)">● Obje</span> &nbsp;
+                    <span
+                        style="display:inline-block; width:10px; height:10px; background:#1b2434; border:1px solid #555"></span>
+                    Temiz &nbsp;
+                    <span
+                        style="display:inline-block; width:10px; height:10px; background:rgba(200,200,200,0.5); border:1px solid #555"></span>
+                    Bulutlu
                 </div>
             </div>
-
-            <!-- Gezegenler Kartı -->
-            <div class="card" style="grid-column: 1 / -1;">
-                <h2><span>🪐</span> Bu Gece Görülebilecek Gezegenler</h2>
-                <div class="planet-grid" id="planetGrid">
-                    <!-- Planets will be populated by JS -->
-                </div>
+            <div class="chart-wrapper" id="chartWrapper">
+                <!-- Layers injected by JS -->
+                <div class="weather-bg" id="weatherBg"></div>
+                <div class="time-axis" id="timeAxis"></div>
+                <div class="objects-layer" id="objectsLayer"></div>
+                <div class="iss-layer" id="issLayer"></div>
             </div>
+        </div>
 
-            <!-- Deep Sky Kartı -->
-            <div class="card" style="grid-column: 1 / -1;">
-                <h2><span>🪐</span> Bu Gece Görülebilecek Deep Sky</h2>
-                <div class="DeepSky-grid" id="DeepSkyGrid">
-                    <!-- Planets will be populated by JS -->
-                </div>
+        <!-- Lists -->
+        <div class="lists-grid">
+            <div class="list-card">
+                <h3>👁️ Çıplak Gözle Görülebilenler</h3>
+                <ul id="nakedList"></ul>
+            </div>
+            <div class="list-card">
+                <h3>🔭 Dürbünle Görülebilenler</h3>
+                <ul id="binocularList"></ul>
             </div>
         </div>
 
         <footer>
-            <p>Veriler Clear Outside ve Celestron Astronomi Takvimi kullanılarak Sakarya koordinatlarına göre
-                hazırlanmıştır.</p>
+            <p>Veriler Güneş Sistemi Dinamikleri ve Skymaps.com baz alınarak otomatik oluşturulmuştur.</p>
         </footer>
     </div>
 
     <script>
-        // Create Stars
+        // --- Star Animation ---
         function initStars() {
             const container = document.getElementById('stars');
-            const count = 150;
-            for (let i = 0; i < count; i++) {
+            for (let i = 0; i < 150; i++) {
                 const star = document.createElement('div');
+                container.appendChild(star);
+                // Simple static stars for performance or complex logic
                 star.className = 'star';
-                const x = Math.random() * 100;
-                const y = Math.random() * 100;
                 const size = Math.random() * 2 + 1;
-                const duration = Math.random() * 3 + 2;
-                star.style.left = x + '%';
-                star.style.top = y + '%';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
                 star.style.width = size + 'px';
                 star.style.height = size + 'px';
-                star.style.setProperty('--duration', duration + 's');
-                container.appendChild(star);
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
             }
         }
 
-        let weatherChart;
+        // --- Utils ---
+        function timeToPercent(timeStr) {
+            const [h, m] = timeStr.split(':').map(Number);
+            let hour = h;
+            if (hour >= 18) {
+                hour = hour - 18;
+            } else if (hour < 18) {
+                hour = hour + 6;
+            }
+            const totalMinutes = (hour * 60) + m;
+            const percentage = (totalMinutes / (12 * 60)) * 100;
+            return Math.max(0, Math.min(100, percentage));
+        }
+
+        // --- Render Functions ---
+        function renderWeather(hourlyData) {
+            const bg = document.getElementById('weatherBg');
+            const axis = document.getElementById('timeAxis');
+            bg.innerHTML = '';
+            axis.innerHTML = '';
+
+            hourlyData.forEach(d => {
+                const div = document.createElement('div');
+                div.className = 'weather-hour';
+                const alpha = Math.min(d.cloud, 80) / 100 * 0.5;
+                div.style.background = `rgba(200, 220, 255, ${alpha})`;
+                div.title = `Saat ${d.hour}: %${d.cloud} Bulut`;
+                bg.appendChild(div);
+
+                const label = document.createElement('div');
+                label.className = 'time-label';
+                label.innerText = d.hour;
+                axis.appendChild(label);
+            });
+        }
+
+        function renderObjects(objects, iss) {
+            const layer = document.getElementById('objectsLayer');
+            layer.innerHTML = '';
+
+            const visibleObjects = objects.filter(o => o.visible);
+
+            visibleObjects.forEach(obj => {
+                const row = document.createElement('div');
+                row.className = 'object-row';
+
+                // Label Container
+                const labelBox = document.createElement('div');
+                labelBox.className = 'object-label-container';
+                labelBox.innerText = obj.name;
+                row.appendChild(labelBox);
+
+                // Timeline Track
+                const track = document.createElement('div');
+                track.className = 'object-timeline-track';
+                row.appendChild(track);
+
+                // Bar
+                const pRise = timeToPercent(obj.rise);
+                const pSet = timeToPercent(obj.set);
+                const bar = document.createElement('div');
+                bar.className = 'object-bar';
+
+                let left = 0, width = 0;
+                if (pSet < pRise) {
+                    left = pRise;
+                    width = 100 - pRise;
+                } else {
+                    left = pRise;
+                    width = pSet - pRise;
+                }
+
+                bar.style.left = `${left}%`;
+                bar.style.width = `${width}%`;
+                track.appendChild(bar);
+
+                layer.appendChild(row);
+            });
+
+            // Render ISS (separate layer)
+            const issLayer = document.getElementById('issLayer');
+            issLayer.innerHTML = '';
+            iss.forEach(pass => {
+                const pStart = timeToPercent(pass.start);
+                const pEnd = timeToPercent(pass.end);
+
+                const bar = document.createElement('div');
+                bar.className = 'iss-bar';
+                bar.style.left = `${pStart}%`;
+                bar.style.width = `${Math.max(pEnd - pStart, 1)}%`;
+                bar.style.top = `${10 + Math.random() * 80}%`; // Random vertical pos for now
+
+                const label = document.createElement('div');
+                label.className = 'iss-label';
+                label.style.left = `${pStart}%`;
+                label.innerText = `ISS (${pass.max_elev}°)`;
+
+                issLayer.appendChild(bar);
+                issLayer.appendChild(label);
+            });
+        }
+
+        function renderLists(lists) {
+            const naked = document.getElementById('nakedList');
+            const bino = document.getElementById('binocularList');
+
+            naked.innerHTML = '';
+            bino.innerHTML = '';
+
+            lists.naked_eye.forEach(item => {
+                const li = document.createElement('li');
+                li.innerText = `${item.name} (Mag: ${item.mag})`;
+                naked.appendChild(li);
+            });
+
+            lists.binocular.forEach(item => {
+                const li = document.createElement('li');
+                li.innerText = `${item.name} (Mag: ${item.mag})`;
+                bino.appendChild(li);
+            });
+        }
 
         async function loadData() {
             try {
                 const response = await fetch('data.json');
                 const data = await response.json();
 
-                // Update Metadata
+                // Metadata
                 if (data.last_updated) {
-                    const date = new Date(data.last_updated);
-                    document.querySelector('.subtitle').innerHTML += ` | Güncelleme: ${date.toLocaleString('tr-TR')}`;
+                    document.querySelector('.subtitle').innerHTML += ` | Güncelleme: ${new Date(data.last_updated).toLocaleString('tr-TR')}`;
                 }
 
-                initChart(data.weather);
-                populateEvents(data.events);
-                populatePlanets(data.planets);
-                populateDeepSky(data.deep_sky);
+                renderWeather(data.weather_hourly);
+                renderObjects(data.objects, data.iss_passes);
+                renderLists(data.lists);
             } catch (err) {
-                console.error('Veri yüklenemedi:', err);
-                document.getElementById('bestWindowMsg').innerText = 'Hata: Veriler yüklenemedi. Lütfen data.json dosyasını kontrol edin.';
+                console.error(err);
+                document.querySelector('.gantt-container').innerHTML = `<p style="padding:1rem; color:red">Veri yüklenemedi. Lütfen Console'u kontrol edin.</p>`;
             }
         }
-
-        // Initialize Chart
-        function initChart(weatherData) {
-            const ctx = document.getElementById('weatherChart').getContext('2d');
-
-            // Determine best window from data
-            const best = weatherData.reduce((prev, curr) => (prev.cloud < curr.cloud) ? prev : curr);
-            document.getElementById('bestWindowMsg').innerText = `${best.hour} civarı en temiz gökyüzü (%${best.cloud} bulut).`;
-
-            if (weatherChart) weatherChart.destroy();
-
-            weatherChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: weatherData.map(d => d.hour),
-                    datasets: [{
-                        label: 'Bulutluluk (%)',
-                        data: weatherData.map(d => d.cloud),
-                        borderColor: '#4fc3f7',
-                        backgroundColor: 'rgba(79, 195, 247, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 2,
-                        pointBackgroundColor: '#4fc3f7',
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: { color: '#b0bec5' },
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                        },
-                        x: {
-                            ticks: { color: '#b0bec5' },
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Populate Content
-        function populateEvents(events) {
-            const eventsCont = document.getElementById('eventsList');
-            eventsCont.innerHTML = '';
-            events.forEach(ev => {
-                eventsCont.innerHTML += `
-                    <div class="event-item">
-                        <div class="event-date">
-                            <div>${ev.date}</div>
-                            <div>${ev.month}</div>
-                        </div>
-                        <div class="event-content">
-                            <h3>${ev.title}</h3>
-                            <p>${ev.desc}</p>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function populatePlanets(planets) {
-            const planetCont = document.getElementById('planetGrid');
-            planetCont.innerHTML = '';
-            planets.forEach(p => {
-                planetCont.innerHTML += `
-                    <div class="planet-card">
-                        <div class="planet-name">${p.name}</div>
-                        <div class="planet-status">${p.status}</div>
-                        <div class="planet-status">Zirve: ${p.peak}</div>
-                        ${p.badge ? `<div class="visibility-badge ${p.class}">${p.badge}</div>` : ''}
-                    </div>
-                `;
-            });
-        }
-
-        function populateDeepSky(DeepSky) {
-            const DeepSkyCont = document.getElementById('DeepSkyGrid');
-            DeepSkyCont.innerHTML = '';
-            DeepSkys.forEach(d => {
-                DeepSkyCont.innerHTML += `
-                    <div class="DeepSky-card">
-                        <div class="DeepSky-name">${d.name}</div>
-                        <div class="DeepSky-status">${d.status}</div>
-                        <div class="DeepSky-status">Zirve: ${d.peak}</div>
-                        ${d.badge ? `<div class="visibility-badge ${d.class}">${d.badge}</div>` : ''}
-                    </div>
-                `;
-            });
-        }
-
 
         window.onload = () => {
             initStars();
@@ -496,6 +548,5 @@
         };
     </script>
 </body>
-
 
 </html>

@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 import os
 
 # --- Configurations ---
-LAT = "40.76"
-LON = "30.36"
+LAT = "40.7806"
+LON = "30.4033"
 
 def fetch_weather():
     """Fetches real cloud cover data from Open-Meteo API"""
@@ -83,3 +83,4 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+

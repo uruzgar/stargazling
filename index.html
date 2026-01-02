@@ -291,7 +291,6 @@
                 transform: translateY(0);
             }
         }
-
     </style>
 </head>
 
@@ -341,7 +340,7 @@
                 </div>
             </div>
         </div>
-        
+
         <footer>
             <p>Veriler Clear Outside ve Celestron Astronomi Takvimi kullanılarak Sakarya koordinatlarına göre
                 hazırlanmıştır.</p>
@@ -386,16 +385,12 @@
                 populateEvents(data.events);
                 populatePlanets(data.planets);
                 populateDeepSky(data.deep_sky);
-                
-                
             } catch (err) {
                 console.error('Veri yüklenemedi:', err);
                 document.getElementById('bestWindowMsg').innerText = 'Hata: Veriler yüklenemedi. Lütfen data.json dosyasını kontrol edin.';
             }
         }
 
-
-        }
         // Initialize Chart
         function initChart(weatherData) {
             const ctx = document.getElementById('weatherChart').getContext('2d');
@@ -494,24 +489,7 @@
             });
         }
 
-        // Saati gün başlangıcından itibaren dakikaya çeviren yardımcı fonksiyon
-        function timeToMinutes(timeStr) {
-            const [hours, minutes] = timeStr.split(':').map(Number);
-            return hours * 60 + minutes;
-        }
-        
-        // Örnek: Grafik akşam 18:00'de başlasın, sabah 06:00'da bitsin (12 saat = 720 dakika)
-        const chartStart = 18 * 60; 
-        const totalDuration = 12 * 60;
-        
-        function calculatePosition(timeStr) {
-            let minutes = timeToMinutes(timeStr);
-            // Eğer saat gece yarısından sonraysa (00:00 - 06:00), 24 saat ekle
-            if (minutes < chartStart) minutes += 24 * 60;
-            
-            const offset = minutes - chartStart;
-            return (offset / totalDuration) * 100; // Yüzde olarak pozisyon
-        }
+
         window.onload = () => {
             initStars();
             loadData();
@@ -521,6 +499,3 @@
 
 
 </html>
-
-
-

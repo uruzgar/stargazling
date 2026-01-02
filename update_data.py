@@ -118,50 +118,40 @@ def fetch_events():
     return events
     
 def fetch_planets():
-    """Gezegen verilerini Sakarya konumu için çeker"""
+    """Gezegen verilerini Sakarya konumu için çeker ve Türkçeleştirir"""
     print("Gezegen verileri çekiliyor...")
-    aylar = {1: "Oca", 2: "Şub", 3: "Mar", 4: "Nis", 5: "May", 6: "Haz", 
-             7: "Tem", 8: "Ağu", 9: "Eyl", 10: "Eki", 11: "Kas", 12: "Ara"}
-    events = []
-    today = datetime.now()
-    day = today.day
-    month = today.month
-    year = today.year
-
-    p_url = f"https://in-the-sky.org/data/planets.php?town=752850&day={day}&month={month}&year={year}"
+    planets_data = []
+    PLANET_TR = {
+        "Mercury": "Merkür", "Venus": "Venüs", "Mars": "Mars",
+        "Jupiter": "Jüpiter", "Saturn": "Satürn", "Uranus": "Uranüs",
+        "Neptune": "Neptün", "Pluto": "Plüton"
+    }
+    url = "https://in-the-sky.org/data/planets.php?town=752850"
     headers = {'User-Agent': 'Mozilla/5.0'}
-    # 1. Gezegen Görünürlüğü (Planets)
+
     try:
-        res = requests.get(p_url, headers=headers, timeout=15)
+        res = requests.get(url, headers=headers, timeout=15)
         soup = BeautifulSoup(res.content, 'html.parser')
-        # Sitedeki 'In the sky tonight' tablosunu bulmaya çalışıyoruz
-        #planet_table = soup.find('table', {'class': 'stripped'})
         table = soup.find('table', {'class': 'stripped'})
         if table:
-            rows = table.find_all('tr')[1:] # Başlığı atla
+            rows = table.find_all('tr')[1:]
             for row in rows:
                 cols = row.find_all('td')
                 if len(cols) >= 2:
                     name_en = cols[0].text.strip()
                     status = cols[1].text.strip()
-                                           
-                        # Görünürlük durumuna göre CSS class ataması
+                    if name_en in PLANET_TR:
+                        name_tr = PLANET_TR[name_en]
+                        # Hatanın oluştuğu satır aşağıdadır, girintisi düzeltildi:
                         v_class = "visible-high" if "visible" in status.lower() else "visible-low"
-                        
                         planets_data.append({
-                            "name": name_en,
+                            "name": name_tr,
                             "status": status,
                             "class": v_class
                         })
-            
     except Exception as e:
-        print(f"Gezegen verisi alınamadı: {e}")
-
-    # Varsayılan (Eğer hiçbir şey çekilemezse boş kalmasın)
-    if not events:
-        events = [{"date": str(day), "month": str(aylar[today.month]), "title": "Gözlem Gecesi", "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."}]
-        
-    return events
+        print(f"Gezegen ayrıştırma hatası: {e}")
+    return planets_data
 
 def fetch_deepsky():
     """Fetches deep sky objects (DSO) from In-The-Sky.org"""
@@ -223,6 +213,7 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 
 
 

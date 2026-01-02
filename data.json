@@ -1,23 +1,43 @@
 {
-    "last_updated": "2026-01-02T11:26:35.339505",
+    "last_updated": "2026-01-02T12:01:49.357389",
     "location": "Sakarya, Adapazarı",
     "coordinates": "40.76, 30.36",
     "weather": [
         {
+            "hour": "13:00",
+            "cloud": 0
+        },
+        {
+            "hour": "14:00",
+            "cloud": 2
+        },
+        {
+            "hour": "15:00",
+            "cloud": 0
+        },
+        {
+            "hour": "16:00",
+            "cloud": 0
+        },
+        {
+            "hour": "17:00",
+            "cloud": 2
+        },
+        {
             "hour": "18:00",
-            "cloud": 20
+            "cloud": 1
         },
         {
             "hour": "19:00",
-            "cloud": 15
+            "cloud": 35
         },
         {
             "hour": "20:00",
-            "cloud": 5
+            "cloud": 1
         },
         {
             "hour": "21:00",
-            "cloud": 2
+            "cloud": 0
         },
         {
             "hour": "22:00",
@@ -30,18 +50,6 @@
         {
             "hour": "00:00",
             "cloud": 0
-        },
-        {
-            "hour": "01:00",
-            "cloud": 0
-        },
-        {
-            "hour": "02:00",
-            "cloud": 3
-        },
-        {
-            "hour": "03:00",
-            "cloud": 10
         }
     ],
     "events": [

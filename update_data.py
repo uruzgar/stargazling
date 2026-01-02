@@ -124,6 +124,40 @@ def fetch_planets():
         
     return events
 
+def fetch_deepsky():
+    """Fetches deep sky objects (DSO) from In-The-Sky.org"""
+    print("Fetching deep sky objects...")
+    dso_list = []
+    # Sakarya konumu için özelleştirilmiş URL
+    url = f"https://in-the-sky.org/data/deepsky.php?town=752850&day={day}&month={month}&year={year}"
+    headers = {'User-Agent': 'Mozilla/5.0'}
+
+    try:
+        res = requests.get(url, headers=headers, timeout=15)
+        soup = BeautifulSoup(res.content, 'html.parser')
+        
+        # Sitedeki ana veri tablosunu bul
+        table = soup.find('table', {'class': 'stripped'})
+        if table:
+            rows = table.find_all('tr')[1:6]  # Başlık hariç ilk 5 objeyi al
+            for row in rows:
+                cols = row.find_all('td')
+                if len(cols) >= 4:
+                    name = cols[1].text.strip() # Obje Adı (Örn: M31)
+                    obj_type = cols[2].text.strip() # Tür (Örn: Galaxy)
+                    mag = cols[3].text.strip() # Parlaklık
+                    
+                    dso_list.append({
+                        "name": name,
+                        "type": obj_type,
+                        "magnitude": mag,
+                        "desc": f"{obj_type} türünde, {mag} parlaklığında."
+                    })
+    except Exception as e:
+        print(f"Deep Sky verisi alınamadı: {e}")
+    
+    return dso_list
+
 def update_json():
     # JSON dosyasının yolunu güvenli hale getiriyoruz
     base_path = os.path.dirname(os.path.realpath(__file__))
@@ -136,6 +170,7 @@ def update_json():
         "weather": fetch_weather(),
         "events": fetch_events(),
         "planets": fetch_planets(),
+        "deep_sky": fetch_deepsky()
     }
     
     with open(json_path, 'w', encoding='utf-8') as f:
@@ -144,6 +179,7 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 
 
 

@@ -1,34 +1,38 @@
-name: Nightly Python Job
+name: Stargazling Data Update
 
 on:
   schedule:
-    # GitHub Actions UTC kullanır
-    # Türkiye UTC+3 → 00:00 TR = 21:00 UTC
-    - cron: "0 21 * * *"
-
-  workflow_dispatch:  # manuel çalıştırma için (opsiyonel)
+    # Türkiye saati ile 01:00 (UTC 22:00)
+    - cron: '0 22 * * *'
+  workflow_dispatch: # İstediğiniz an manuel çalıştırmak için
 
 jobs:
-  run-script:
+  update-data:
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write # GitHub'a geri yazma izni
 
     steps:
-      - name: Repo'yu checkout et
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Python kurulumu
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.10'
 
-      - name: Script'i çalıştır
-        run: python update_data.py
-
-      - name: JSON değiştiyse commit et
+      - name: Install dependencies
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          pip install requests
 
+      - name: Run Update Script
+        run: python update_data.py # <--- Burayı .py dosyanızın gerçek adıyla değiştirin
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add data.json
-          git diff --cached --quiet || git commit -m "Nightly JSON update"
+          git commit -m "Auto-update: $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
           git push

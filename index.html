@@ -661,9 +661,60 @@
                 if (data.moon_phase) {
                     renderMoonPhase(data.moon_phase);
                 }
+
+                renderCurrentTime();
             } catch (err) {
                 console.error(err);
                 document.querySelector('.gantt-container').innerHTML = `<p style="padding:1rem; color:red">Veri yüklenemedi. Lütfen Console'u kontrol edin.</p>`;
+            }
+        }
+
+        function renderCurrentTime() {
+            const now = new Date();
+            const h = now.getHours();
+            const m = now.getMinutes();
+
+            // Show only if within the chart range (18:00 - 06:00)
+            if (h >= 18 || h < 6) {
+                const timeStr = `${h}:${m}`;
+                const pct = timeToPercent(timeStr);
+
+                const wrapper = document.getElementById('chartWrapper');
+
+                // Remove existing if any
+                const existing = document.getElementById('currentTimeLine');
+                if (existing) existing.remove();
+
+                const line = document.createElement('div');
+                line.id = 'currentTimeLine';
+                line.style.position = 'absolute';
+                line.style.top = '0';
+                line.style.bottom = '30px';
+                // Calc left position accounting for 150px label offset
+                line.style.left = `calc(150px + (100% - 150px) * ${pct / 100})`;
+                line.style.width = '2px';
+                line.style.background = 'rgba(255, 82, 82, 0.8)';
+                line.style.zIndex = '20';
+                line.style.pointerEvents = 'none';
+                line.style.boxShadow = '0 0 8px rgba(255, 82, 82, 0.5)';
+
+                const label = document.createElement('div');
+                label.innerText = `Şu an (${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')})`;
+                label.style.position = 'absolute';
+                label.style.top = '-25px';
+                label.style.left = '50%';
+                label.style.transform = 'translateX(-50%)';
+                label.style.fontSize = '0.75rem';
+                label.style.fontWeight = 'bold';
+                label.style.color = '#ff5252';
+                label.style.whiteSpace = 'nowrap';
+                label.style.background = 'rgba(10,14,23,0.8)';
+                label.style.padding = '2px 6px';
+                label.style.borderRadius = '4px';
+                label.style.border = '1px solid rgba(255, 82, 82, 0.4)';
+
+                line.appendChild(label);
+                wrapper.appendChild(line);
             }
         }
 

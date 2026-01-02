@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-01-02T19:46:24.224672",
+    "last_updated": "2026-01-02T17:58:38.390133",
     "location": "Sakarya, Adapazarı",
     "timeline": {
         "start": "18:00",
@@ -63,83 +63,83 @@
         {
             "name": "Güneş",
             "type": "star",
-            "rise": "08:24",
-            "set": "17:40",
+            "rise": "05:24",
+            "set": "14:40",
             "visible": true
         },
         {
             "name": "Ay",
             "type": "moon",
-            "rise": "16:23",
-            "set": "08:36",
+            "rise": "13:23",
+            "set": "05:36",
             "visible": true
         },
         {
             "name": "Merkür",
             "type": "planet",
-            "rise": "07:43",
-            "set": "16:46",
+            "rise": "04:43",
+            "set": "13:46",
             "visible": true
         },
         {
             "name": "Venüs",
             "type": "planet",
-            "rise": "08:24",
-            "set": "17:33",
+            "rise": "05:24",
+            "set": "14:33",
             "visible": true
         },
         {
             "name": "Mars",
             "type": "planet",
-            "rise": "08:34",
-            "set": "17:45",
+            "rise": "05:34",
+            "set": "14:45",
             "visible": true
         },
         {
             "name": "Jüpiter",
             "type": "planet",
-            "rise": "18:16",
-            "set": "09:03",
+            "rise": "15:16",
+            "set": "06:03",
             "visible": true
         },
         {
             "name": "Satürn",
             "type": "planet",
-            "rise": "12:09",
-            "set": "23:49",
+            "rise": "09:05",
+            "set": "20:49",
             "visible": true
         }
     ],
     "iss_passes": [
         {
-            "start": "22:55",
+            "start": "19:55",
             "max_elev": 41,
-            "end": "23:01"
+            "end": "20:01"
         },
         {
-            "start": "00:32",
+            "start": "21:32",
             "max_elev": 28,
-            "end": "00:38"
+            "end": "21:38"
         },
         {
-            "start": "02:11",
+            "start": "23:11",
             "max_elev": 13,
-            "end": "02:14"
+            "end": "23:14"
         },
         {
-            "start": "03:48",
+            "start": "00:48",
             "max_elev": 17,
-            "end": "03:53"
+            "end": "00:53"
         },
         {
-            "start": "05:24",
+            "start": "02:24",
             "max_elev": 65,
-            "end": "05:31"
+            "end": "02:31"
         },
         {
-            "start": "07:02",
+            "start": "04:02",
             "max_elev": 14,
-            "end": "07:06"
+            "end": "04:06"
         }
     ],
     "lists": {

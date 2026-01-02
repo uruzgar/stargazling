@@ -128,6 +128,10 @@ def fetch_deepsky():
     """Fetches deep sky objects (DSO) from In-The-Sky.org"""
     print("Fetching deep sky objects...")
     dso_list = []
+    today = datetime.now()
+    day = today.day
+    month = today.month
+    year = today.year
     # Sakarya konumu için özelleştirilmiş URL
     url = f"https://in-the-sky.org/data/deepsky.php?town=752850&day={day}&month={month}&year={year}"
     headers = {'User-Agent': 'Mozilla/5.0'}
@@ -179,6 +183,7 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 
 
 

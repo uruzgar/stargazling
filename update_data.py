@@ -56,24 +56,28 @@ def fetch_weather():
         return []
 
 def fetch_events():
-    """Fetches astronomical events from In-The-Sky.org"""
-    print("Fetching monthly events from In-The-Sky...")
-    aylar = {1: "Oca", 2: "Şub", 3: "Mar", 4: "Nis", 5: "May", 6: "Haz", 
-             7: "Tem", 8: "Ağu", 9: "Eyl", 10: "Eki", 11: "Kas", 12: "Ara"}
+    """Fetches tonight's astronomical events from In-The-Sky.org"""
+    print("Fetching tonight's events...")
     events = []
-    items = []
+    # Bugünün tarih bilgilerini alalım
     today = datetime.now()
-    day = today.day
-    month = today.month
-    year = today.year
+    day_str = today.strftime("%d") # "02" gibi
+    
+    # Ay isimleri sözlüğü (URL ve eşleştirme için)
+    aylar_tr = {
+        1: "Oca", 2: "Şub", 3: "Mar", 4: "Nis", 5: "May", 6: "Haz",
+        7: "Tem", 8: "Ağu", 9: "Eyl", 10: "Eki", 11: "Kas", 12: "Ara"
+    }
+    current_month_tr = aylar_tr[today.month]
 
-    c_url = f"https://in-the-sky.org/data/constellations.php?town=752850&day={day}&month={month}&year={year}"
+    # Haberler/Olaylar akışı sayfası
+    url = f"https://in-the-sky.org/news.php?feed=events&town=752850"
     headers = {'User-Agent': 'Mozilla/5.0'}
-    # 2. Takımyıldızlar (Constellations)
+
     try:
-        
-        res = requests.get(c_url, headers=headers, timeout=10)
+        res = requests.get(url, headers=headers, timeout=15)
         soup = BeautifulSoup(res.content, 'html.parser')
+        
         # Olay kartlarını bul (genellikle 'newsitem' class'ı kullanılır)
         items = soup.find_all('div', {'class': 'newsitem'})
         
@@ -251,6 +255,7 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 
 
 

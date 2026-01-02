@@ -12,7 +12,9 @@ LON = "30.4033"
 def fetch_weather():
     """Fetches real cloud cover data from Open-Meteo API"""
     print(f"Fetching real weather for {LAT}, {LON} from Open-Meteo...")
-    
+
+    aylar = {1: "Oca", 2: "Şub", 3: "Mar", 4: "Nis", 5: "May", 6: "Haz", 
+             7: "Tem", 8: "Ağu", 9: "Eyl", 10: "Eki", 11: "Kas", 12: "Ara"}
     # SDK yerine doğrudan URL isteği yapıyoruz (Daha hafif ve hatasız)
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
@@ -56,6 +58,8 @@ def fetch_weather():
 def fetch_events():
     """Fetches astronomical events from In-The-Sky.org"""
     print("Fetching monthly events from In-The-Sky...")
+    aylar = {1: "Oca", 2: "Şub", 3: "Mar", 4: "Nis", 5: "May", 6: "Haz", 
+             7: "Tem", 8: "Ağu", 9: "Eyl", 10: "Eki", 11: "Kas", 12: "Ara"}
     events = []
     today = datetime.now()
     day = today.day
@@ -82,13 +86,15 @@ def fetch_events():
 
     # Varsayılan (Eğer hiçbir şey çekilemezse boş kalmasın)
     if not events:
-        events = [{"date": str(day), "month": str(month), "title": "Gözlem Gecesi", "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."}]
+        events = [{"date": str(day), "month": str(aylar[today.month]), "title": "Gözlem Gecesi", "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."}]
         
     return events
     
 def fetch_planets():
     """Fetches astronomical events from In-The-Sky.org"""
     print("Fetching monthly events from In-The-Sky...")
+    aylar = {1: "Oca", 2: "Şub", 3: "Mar", 4: "Nis", 5: "May", 6: "Haz", 
+             7: "Tem", 8: "Ağu", 9: "Eyl", 10: "Eki", 11: "Kas", 12: "Ara"}
     events = []
     today = datetime.now()
     day = today.day
@@ -118,13 +124,15 @@ def fetch_planets():
 
     # Varsayılan (Eğer hiçbir şey çekilemezse boş kalmasın)
     if not events:
-        events = [{"date": str(day), "month": "Oca", "title": "Gözlem Gecesi", "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."}]
+        events = [{"date": str(day), "month": str(aylar[today.month]), "title": "Gözlem Gecesi", "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."}]
         
     return events
 
 def fetch_deepsky():
     """Fetches deep sky objects (DSO) from In-The-Sky.org"""
     print("Fetching deep sky objects...")
+    aylar = {1: "Oca", 2: "Şub", 3: "Mar", 4: "Nis", 5: "May", 6: "Haz", 
+             7: "Tem", 8: "Ağu", 9: "Eyl", 10: "Eki", 11: "Kas", 12: "Ara"}
     dso_list = []
     today = datetime.now()
     day = today.day
@@ -181,6 +189,7 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 
 
 

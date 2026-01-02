@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests
+          pip install requests beautifulsoup4
 
       - name: Run Update Script
         run: python update_data.py # <--- Burayı .py dosyanızın gerçek adıyla değiştirin

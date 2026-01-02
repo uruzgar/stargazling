@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-01-02T12:15:35.704442",
+    "last_updated": "2026-01-02T12:31:33.102770",
     "location": "Sakarya, Adapazarı",
     "coordinates": "40.7806, 30.4033",
     "weather": [
@@ -55,25 +55,17 @@
     "events": [
         {
             "date": "2",
-            "month": "Oca",
+            "month": "1",
             "title": "Görünür Takımyıldızlar",
             "desc": "Bu gece en iyi görülenler: Bootes », Cancer », Canes Venatici »."
         }
     ],
     "planets": [
         {
-            "name": "Jüpiter",
-            "status": "Tüm gece görünür",
-            "peak": "01:42",
-            "badge": "Mükemmel",
-            "class": "visible-high"
-        },
-        {
-            "name": "Satürn",
-            "status": "23:47'ye kadar",
-            "peak": "19:10",
-            "badge": "İyi",
-            "class": "visible-mid"
+            "date": "2",
+            "month": "Oca",
+            "title": "Gözlem Gecesi",
+            "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."
         }
     ]
 }

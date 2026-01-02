@@ -1,11 +1,13 @@
 import requests
 import json
 from datetime import datetime, timedelta
+import pytz
 import os
 
 # --- Configurations ---
 LAT = "40.76"
 LON = "30.36"
+TRT = pytz.timezone('Europe/Istanbul')
 
 # Additional imports for Skyfield
 from skyfield.api import load, wgs84
@@ -14,7 +16,7 @@ from skyfield import almanac
 def fetch_weather_timeline():
     """Fetches real hourly cloud cover, visibility, and humidity from Open-Meteo"""
     try:
-        now = datetime.now()
+        now = datetime.now(TRT)
         if now.hour < 12:
             start_date = (now - timedelta(days=1)).strftime("%Y-%m-%d")
             end_date = now.strftime("%Y-%m-%d")
@@ -27,7 +29,7 @@ def fetch_weather_timeline():
             "latitude": LAT,
             "longitude": LON,
             "hourly": "cloud_cover,visibility,relative_humidity_2m",
-            "timezone": "auto",
+            "timezone": "Europe/Istanbul", # Explicitly request TRT from API
             "start_date": start_date,
             "end_date": end_date
         }
@@ -50,7 +52,7 @@ def fetch_weather_timeline():
             for i in range(13):
                 if start_idx + i < len(times):
                     final_timeline.append({
-                        "hour": datetime.fromisoformat(times[start_idx+i]).strftime("%H:%M"),
+                        "hour": times[start_idx+i].split('T')[1], # OpenMeteo returns ISO local string
                         "cloud": clouds[start_idx+i],
                         "visibility": vis[start_idx+i],
                         "humidity": hum[start_idx+i]
@@ -69,7 +71,7 @@ def get_moon_phase_info():
     try:
         eph = load('de421.bsp')
         ts = load.timescale()
-        now = datetime.now().astimezone()
+        now = datetime.now(TRT)
         t = ts.from_datetime(now)
         
         # 0 = New Moon, 0.25 = First Quarter, 0.5 = Full Moon, 0.75 = Last Quarter
@@ -109,23 +111,22 @@ def fetch_celestial_objects():
         sakarya_topo = wgs84.latlon(float(LAT), float(LON))
         ts = load.timescale()
         
-        now = datetime.now()
-        t0_dt = now.replace(hour=12, minute=0, second=0, microsecond=0).astimezone()
-        t1_dt = (now + timedelta(days=1)).replace(hour=12, minute=0).astimezone()
+        now = datetime.now(TRT)
+        # Ensure we construct timezones correctly
+        t0_dt = now.replace(hour=12, minute=0, second=0, microsecond=0)
+        t1_dt = (now + timedelta(days=1)).replace(hour=12, minute=0)
         
         t0 = ts.from_datetime(t0_dt)
         t1 = ts.from_datetime(t1_dt)
 
         # Generate hourly timestamps for the graph (18:00 to 06:00)
-        # Using the start date defined in fetch_weather_timeline logic ideally, but replicating simple logic here
-        # We'll generate t objects for 18, 19... 06
         graph_times = []
         base_time = now if now.hour >= 12 else now - timedelta(days=1)
         base_time = base_time.replace(hour=18, minute=0, second=0, microsecond=0)
         
         for i in range(13):
             dt_hour = base_time + timedelta(hours=i)
-            graph_times.append(ts.from_datetime(dt_hour.astimezone()))
+            graph_times.append(ts.from_datetime(dt_hour))
 
         bodies = {
             'Güneş': eph['sun'],
@@ -147,7 +148,7 @@ def fetch_celestial_objects():
             is_visible = False
             
             for time_obj, event in zip(t_events, events):
-                dt = time_obj.astimezone(None)
+                dt = time_obj.astimezone(TRT)
                 dt_str = dt.strftime("%H:%M")
                 if event == 1: rise_time = dt_str
                 else: set_time = dt_str
@@ -192,9 +193,9 @@ def fetch_iss_passes():
         iss = by_name['ISS (ZARYA)']
         
         ts = load.timescale()
-        now = datetime.now()
-        t0 = ts.from_datetime(now.astimezone())
-        t1 = ts.from_datetime((now + timedelta(days=1)).astimezone())
+        now = datetime.now(TRT)
+        t0 = ts.from_datetime(now)
+        t1 = ts.from_datetime(now + timedelta(days=1))
         
         sakarya_topos = wgs84.latlon(float(LAT), float(LON))
         
@@ -202,7 +203,7 @@ def fetch_iss_passes():
         
         current_pass = {}
         for ti, event in zip(t, events):
-            time_str = ti.astimezone(None).strftime("%H:%M")
+            time_str = ti.astimezone(TRT).strftime("%H:%M")
             if event == 0: # Rise
                 current_pass['start'] = time_str
             elif event == 1: # Culminate

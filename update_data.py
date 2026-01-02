@@ -108,8 +108,8 @@ def fetch_planets():
         soup = BeautifulSoup(res.content, 'html.parser')
         # Sitedeki 'In the sky tonight' tablosunu bulmaya çalışıyoruz
         #planet_table = soup.find('table', {'class': 'stripped'})
-        planet_table = soup.find_all('a', href=re.compile(r'object\.php\?id='))
-        if planet_table:
+        con_list  = soup.find_all('a', href=re.compile(r'object\.php\?id='))
+        if con_list :
             #rows = planet_table.find_all('tr')[1:4] # İlk 8 gezegeni al
             top_cons = [c.text for c in con_list[:8]] 
             events.append({
@@ -147,7 +147,7 @@ def fetch_deepsky():
         soup = BeautifulSoup(res.content, 'html.parser')
         
         # Sitedeki ana veri tablosunu bul
-        table = soup.find('table', {'class': 'stripped'})
+        table = soup.find('table', {'class': 'planetinfo centred'})
         if table:
             rows = table.find_all('tr')[1:6]  # Başlık hariç ilk 5 objeyi al
             for row in rows:
@@ -189,6 +189,7 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 
 
 

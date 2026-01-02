@@ -1,5 +1,5 @@
 {
-    "last_updated": "2026-01-02T12:31:33.102770",
+    "last_updated": "2026-01-02T12:57:48.562942",
     "location": "Sakarya, Adapazarı",
     "coordinates": "40.7806, 30.4033",
     "weather": [
@@ -67,5 +67,6 @@
             "title": "Gözlem Gecesi",
             "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."
         }
-    ]
+    ],
+    "deep_sky": []
 }

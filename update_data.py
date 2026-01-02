@@ -61,6 +61,7 @@ def fetch_events():
     aylar = {1: "Oca", 2: "Şub", 3: "Mar", 4: "Nis", 5: "May", 6: "Haz", 
              7: "Tem", 8: "Ağu", 9: "Eyl", 10: "Eki", 11: "Kas", 12: "Ara"}
     events = []
+    items = []
     today = datetime.now()
     day = today.day
     month = today.month
@@ -192,7 +193,43 @@ def fetch_deepsky():
         print(f"Deep Sky verisi alınamadı: {e}")
     
     return dso_list
+    
+def fetch_visibilities():
+    """Gök cisimlerinin doğuş, batış ve en iyi görünme saatlerini çeker"""
+    print("Görünürlük zamanları çekiliyor...")
+    vis_data = []
+    # Sakarya konumu için URL (town=752850)
+    url = "https://in-the-sky.org/whatsup_times.php?town=752850"
+    headers = {'User-Agent': 'Mozilla/5.0'}
 
+    try:
+        res = requests.get(url, headers=headers, timeout=15)
+        soup = BeautifulSoup(res.content, 'html.parser')
+        
+        # Sitedeki veri tablosunu bul
+        table = soup.find('table', {'id': 'datatable'})
+        if table:
+            rows = table.find_all('tr')[1:8] # En popüler ilk 7 nesneyi al
+            for row in rows:
+                cols = row.find_all('td')
+                if len(cols) >= 5:
+                    name = cols[0].text.strip()
+                    # Saatleri ayıkla (Örn: 18:24, 02:15 vb.)
+                    rises = cols[2].text.strip()
+                    culm = cols[3].text.strip()
+                    sets = cols[4].text.strip()
+                    
+                    vis_data.append({
+                        "object": name,
+                        "rise": rises,
+                        "peak": culm,
+                        "set": sets
+                    })
+    except Exception as e:
+        print(f"Görünürlük verisi hatası: {e}")
+    
+    return vis_data
+    
 def update_json():
     # JSON dosyasının yolunu güvenli hale getiriyoruz
     base_path = os.path.dirname(os.path.realpath(__file__))
@@ -204,7 +241,8 @@ def update_json():
         "coordinates": f"{LAT}, {LON}",
         "weather": fetch_weather(),
         "events": fetch_events(),
-        "planets": fetch_planets()
+        "planets": fetch_planets(),
+        "visibilities": fetch_visibilities()
     }
     
     with open(json_path, 'w', encoding='utf-8') as f:
@@ -213,6 +251,7 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 
 
 

@@ -2,40 +2,29 @@ import requests
 import json
 from datetime import datetime, timedelta
 import os
-import openmeteo_requests
-
-import pandas as pd
-import requests_cache
-from retry_requests import retry
 
 # --- Configurations ---
 LAT = "40.76"
 LON = "30.36"
 
 def fetch_weather():
-"""Fetches real cloud cover data from Open-Meteo API"""
+    """Fetches real cloud cover data from Open-Meteo API"""
     print(f"Fetching real weather for {LAT}, {LON} from Open-Meteo...")
-    # Setup the Open-Meteo API client with cache and retry on error
-    cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
-    retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
-    openmeteo = openmeteo_requests.Client(session = retry_session)
-
-    # Make sure all required weather variables are listed here
-    # The order of variables in hourly or daily is important to assign them correctly below
+    
+    # SDK yerine doğrudan URL isteği yapıyoruz (Daha hafif ve hatasız)
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
         "latitude": LAT,
         "longitude": LON,
-        "hourly": "cloud_cover", # Saatlik bulut verisi
-        "timezone": "auto",      # Konumun saat dilimini otomatik algıla
-        "forecast_days": 2       # Bugün ve yarını al (gece yarısını geçtiği için)
+        "hourly": "cloud_cover", 
+        "timezone": "auto",      
+        "forecast_days": 2       
     }
 
     try:
-        #response = requests.get(url, params=params)
-        responses = openmeteo.weather_api(url, params=params)
-        response = responses[0]
-        #response.raise_for_status() # Hata varsa durdur
+        # Standart requests kütüphanesi kullanıyoruz
+        response = requests.get(url, params=params)
+        response.raise_for_status() 
         
         data = response.json()
         hourly_data = data.get("hourly", {})
@@ -44,26 +33,22 @@ def fetch_weather():
 
         weather_list = []
         
-        # Şu anki saati al
         now = datetime.now()
         
-        # Gelen veriyi işle
         for t_str, c_val in zip(times, clouds):
-            # API'den gelen zaman formatı: "2023-10-27T14:00"
             dt_obj = datetime.strptime(t_str, "%Y-%m-%dT%H:%M")
             
-            # Sadece şu andan itibaren sonraki 12 saati al (Gözlem için)
+            # Şu andan itibaren sonraki 12 saati al
             if now <= dt_obj < now + timedelta(hours=12):
                 weather_list.append({
-                    "hour": dt_obj.strftime("%H:%M"), # "18:00" formatına çevir
-                    "cloud": c_val # Yüzde olarak bulut oranı (0-100)
+                    "hour": dt_obj.strftime("%H:%M"),
+                    "cloud": c_val
                 })
                 
         return weather_list
 
     except Exception as e:
         print(f"Hata oluştu: {e}")
-        # Hata durumunda boş liste veya varsayılan değer dön
         return []
 
 def fetch_events():
@@ -76,6 +61,10 @@ def fetch_events():
     ]
 
 def update_json():
+    # JSON dosyasının yolunu güvenli hale getiriyoruz
+    base_path = os.path.dirname(os.path.realpath(__file__))
+    json_path = os.path.join(base_path, "data.json")
+
     data = {
         "last_updated": datetime.now().isoformat(),
         "location": "Sakarya, Adapazarı",
@@ -88,10 +77,9 @@ def update_json():
         ]
     }
     
-    with open('data.json', 'w', encoding='utf-8') as f:
+    with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
     print("data.json updated successfully.")
 
 if __name__ == "__main__":
     update_json()
-

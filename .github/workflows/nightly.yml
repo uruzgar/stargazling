@@ -21,10 +21,6 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Bağımlılıkları yükle
-        if: exists('requirements.txt')
-        run: pip install -r requirements.txt
-
       - name: Script'i çalıştır
         run: python update_data.py
 

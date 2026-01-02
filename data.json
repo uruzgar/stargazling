@@ -1,12 +1,8 @@
 {
-    "last_updated": "2026-01-02T13:22:49.926206",
+    "last_updated": "2026-01-02T14:10:15.786684",
     "location": "Sakarya, Adapazarı",
     "coordinates": "40.7806, 30.4033",
     "weather": [
-        {
-            "hour": "14:00",
-            "cloud": 2
-        },
         {
             "hour": "15:00",
             "cloud": 0
@@ -50,35 +46,20 @@
         {
             "hour": "01:00",
             "cloud": 7
+        },
+        {
+            "hour": "02:00",
+            "cloud": 20
         }
     ],
     "events": [
         {
-            "date": "2",
-            "month": "1",
-            "title": "Görünür Takımyıldızlar",
-            "desc": "Bu gece en iyi görülenler: Bootes », Cancer », Canes Venatici », Coma Berenices », Corona Borealis », Corvus », Crater », Hercules », Leo », Leo Minor », Libra », Lynx », Ophiuchus », Serpens Caput », Sextans », Ursa Major », Virgo », Camelopardalis », Canis Major », Canis Minor », Cassiopeia », Cepheus », Columba », Cygnus », Draco », Fornax », Gemini », Hydra », Lepus », Lyra », Monoceros », Ursa Minor », Andromeda », Aquarius », Aries », Auriga », Cetus », Delphinus », Equuleus », Eridanus », Lacerta », Orion », Pegasus », Perseus », Pisces », Sagitta », Taurus », Triangulum », Vulpecula », Antlia », Aquila », Capricornus », Lupus », Microscopium », Piscis Austrinus », Pyxis », Sagittarius », Scorpius », Sculptor », Scutum »."
-        },
-        {
-            "date": "2",
-            "month": "1",
-            "title": "Görünür Takımyıldızlar",
-            "desc": "Bu gece en iyi görülenler: Bootes », Cancer », Canes Venatici », Coma Berenices », Corona Borealis », Corvus », Crater », Hercules », Leo », Leo Minor », Libra », Lynx », Ophiuchus », Serpens Caput », Sextans », Ursa Major », Virgo », Camelopardalis », Canis Major », Canis Minor », Cassiopeia », Cepheus », Columba », Cygnus », Draco », Fornax », Gemini », Hydra », Lepus », Lyra », Monoceros », Ursa Minor », Andromeda », Aquarius », Aries », Auriga », Cetus », Delphinus », Equuleus », Eridanus », Lacerta », Orion », Pegasus », Perseus », Pisces », Sagitta », Taurus », Triangulum », Vulpecula », Antlia », Aquila », Capricornus », Lupus », Microscopium », Piscis Austrinus », Pyxis », Sagittarius », Scorpius », Sculptor », Scutum »."
-        },
-        {
-            "date": "2",
-            "month": "1",
-            "title": "Görünür Takımyıldızlar",
-            "desc": "Bu gece en iyi görülenler: Bootes », Cancer », Canes Venatici », Coma Berenices », Corona Borealis », Corvus », Crater », Hercules », Leo », Leo Minor », Libra », Lynx », Ophiuchus », Serpens Caput », Sextans », Ursa Major », Virgo », Camelopardalis », Canis Major », Canis Minor », Cassiopeia », Cepheus », Columba », Cygnus », Draco », Fornax », Gemini », Hydra », Lepus », Lyra », Monoceros », Ursa Minor », Andromeda », Aquarius », Aries », Auriga », Cetus », Delphinus », Equuleus », Eridanus », Lacerta », Orion », Pegasus », Perseus », Pisces », Sagitta », Taurus », Triangulum », Vulpecula », Antlia », Aquila », Capricornus », Lupus », Microscopium », Piscis Austrinus », Pyxis », Sagittarius », Scorpius », Sculptor », Scutum »."
-        }
-    ],
-    "planets": [
-        {
-            "date": "2",
+            "date": "02",
             "month": "Oca",
-            "title": "Gözlem Gecesi",
-            "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."
+            "title": "Sakin Gökyüzü",
+            "desc": "Bu gece için özel bir gök olayı kaydedilmedi. Gözlem için harika bir gece olabilir!"
         }
     ],
-    "deep_sky": []
+    "planets": [],
+    "visibilities": []
 }

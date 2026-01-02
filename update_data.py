@@ -101,20 +101,18 @@ def fetch_planets():
         res = requests.get(p_url, timeout=10)
         soup = BeautifulSoup(res.content, 'html.parser')
         # Sitedeki 'In the sky tonight' tablosunu bulmaya çalışıyoruz
-        planet_table = soup.find('table', {'class': 'stripped'})
+        #planet_table = soup.find('table', {'class': 'stripped'})
+        planet_table = soup.find_all('a', href=re.compile(r'object\.php\?id='))
         if planet_table:
-            rows = planet_table.find_all('tr')[1:4] # İlk 3 gezegeni al
-            for row in rows:
-                cols = row.find_all('td')
-                if len(cols) > 1:
-                    p_name = cols[0].text.strip()
-                    p_info = cols[1].text.strip()
-                    events.append({
-                        "date": f"{day}",
-                        "month": f"{month}", # Ay ismini dinamik yapabilirsiniz
-                        "title": f"Gezegen: {p_name}",
-                        "desc": f"{p_name} bu gece {p_info}."
-                    })
+            #rows = planet_table.find_all('tr')[1:4] # İlk 8 gezegeni al
+            top_cons = [c.text for c in con_list[:8]] 
+            events.append({
+                "date": f"{day}",
+                "month": f"{month}",
+                "title": "Görünür Gezegenler",
+                "desc": f"Bu gece en iyi görülenler: {', '.join(top_cons)}."
+            })
+            
     except Exception as e:
         print(f"Gezegen verisi alınamadı: {e}")
 
@@ -183,6 +181,7 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 
 
 

@@ -66,33 +66,60 @@ def fetch_events():
     month = today.month
     year = today.year
 
+    c_url = f"https://in-the-sky.org/data/constellations.php?town=752850&day={day}&month={month}&year={year}"
+    headers = {'User-Agent': 'Mozilla/5.0'}
     # 2. Takımyıldızlar (Constellations)
     try:
-        c_url = f"https://in-the-sky.org/data/constellations.php?town=752850&day={day}&month={month}&year={year}"
-        res = requests.get(c_url, timeout=10)
+        
+        res = requests.get(c_url, headers=headers, timeout=10)
         soup = BeautifulSoup(res.content, 'html.parser')
-        # 'Currently visible' olanları bul
-        con_list = soup.find_all('a', href=re.compile(r'constellation\.php\?id='))
-        if con_list:
-            top_cons = [c.text for c in con_list[:60]] # İlk 3 takımyıldız
-            events.append({
-                "date": f"{day}",
-                "month": f"{month}",
-                "title": "Görünür Takımyıldızlar",
-                "desc": f"Bu gece en iyi görülenler: {', '.join(top_cons)}."
-            })
+        # Olay kartlarını bul (genellikle 'newsitem' class'ı kullanılır)
+        items = soup.find_all('div', {'class': 'newsitem'})
+        
+        for item in items:
+            # Tarih kısmını ayıkla (Örn: "02 Jan 2026")
+            date_div = item.find('div', {'class': 'date'})
+            if date_div:
+                date_text = date_div.text.strip()
+                
+                # Sadece BUGÜN olan olayları filtrele
+                # Sitedeki format genelde "02 Jan" şeklindedir
+                if date_text.startswith(day_str):
+                    title_elem = item.find('a')
+                    desc_elem = item.find('div', {'class': 'newsitem_text'})
+                    
+                    if title_elem:
+                        title = title_elem.text.strip()
+                        desc = desc_elem.text.strip() if desc_elem else "Detaylı bilgi bulunmuyor."
+                        
+                        # Başlığı Türkçeye çevirme (Basit denemeler)
+                        title = title.replace("Conjunction", "Yakınlaşma")
+                        title = title.replace("Moon", "Ay").replace("Close approach", "Yakın geçiş")
+                        
+                        events.append({
+                            "date": day_str,
+                            "month": current_month_tr,
+                            "title": title,
+                            "desc": desc[:150] + "..." # Özeti kısa tutalım
+                        })
+                        
     except Exception as e:
-        print(f"Takımyıldız verisi alınamadı: {e}")
+        print(f"Olaylar çekilirken hata oluştu: {e}")
 
-    # Varsayılan (Eğer hiçbir şey çekilemezse boş kalmasın)
+    # Eğer bugün bir olay yoksa boş dönmesin, genel bilgi versin
     if not events:
-        events = [{"date": str(day), "month": str(aylar[today.month]), "title": "Gözlem Gecesi", "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."}]
+        events.append({
+            "date": day_str,
+            "month": current_month_tr,
+            "title": "Sakin Gökyüzü",
+            "desc": "Bu gece için özel bir gök olayı kaydedilmedi. Gözlem için harika bir gece olabilir!"
+        })
         
     return events
     
 def fetch_planets():
-    """Fetches astronomical events from In-The-Sky.org"""
-    print("Fetching monthly events from In-The-Sky...")
+    """Gezegen verilerini Sakarya konumu için çeker"""
+    print("Gezegen verileri çekiliyor...")
     aylar = {1: "Oca", 2: "Şub", 3: "Mar", 4: "Nis", 5: "May", 6: "Haz", 
              7: "Tem", 8: "Ağu", 9: "Eyl", 10: "Eki", 11: "Kas", 12: "Ara"}
     events = []
@@ -101,23 +128,31 @@ def fetch_planets():
     month = today.month
     year = today.year
 
+    p_url = f"https://in-the-sky.org/data/planets.php?town=752850&day={day}&month={month}&year={year}"
+    headers = {'User-Agent': 'Mozilla/5.0'}
     # 1. Gezegen Görünürlüğü (Planets)
     try:
-        p_url = f"https://in-the-sky.org/data/planets.php?town=752850&day={day}&month={month}&year={year}"
-        res = requests.get(p_url, timeout=10)
+        res = requests.get(p_url, headers=headers, timeout=15)
         soup = BeautifulSoup(res.content, 'html.parser')
         # Sitedeki 'In the sky tonight' tablosunu bulmaya çalışıyoruz
         #planet_table = soup.find('table', {'class': 'stripped'})
-        con_list  = soup.find_all('a', href=re.compile(r'object\.php\?id='))
-        if con_list :
-            #rows = planet_table.find_all('tr')[1:4] # İlk 8 gezegeni al
-            top_cons = [c.text for c in con_list[:8]] 
-            events.append({
-                "date": f"{day}",
-                "month": f"{month}",
-                "title": "Görünür Gezegenler",
-                "desc": f"Bu gece en iyi görülenler: {', '.join(top_cons)}."
-            })
+        table = soup.find('table', {'class': 'stripped'})
+        if table:
+            rows = table.find_all('tr')[1:] # Başlığı atla
+            for row in rows:
+                cols = row.find_all('td')
+                if len(cols) >= 2:
+                    name_en = cols[0].text.strip()
+                    status = cols[1].text.strip()
+                                           
+                        # Görünürlük durumuna göre CSS class ataması
+                        v_class = "visible-high" if "visible" in status.lower() else "visible-low"
+                        
+                        planets_data.append({
+                            "name": name_en,
+                            "status": status,
+                            "class": v_class
+                        })
             
     except Exception as e:
         print(f"Gezegen verisi alınamadı: {e}")
@@ -179,8 +214,7 @@ def update_json():
         "coordinates": f"{LAT}, {LON}",
         "weather": fetch_weather(),
         "events": fetch_events(),
-        "planets": fetch_planets(),
-        "deep_sky": fetch_deepsky()
+        "planets": fetch_planets()
     }
     
     with open(json_path, 'w', encoding='utf-8') as f:
@@ -189,6 +223,7 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 
 
 

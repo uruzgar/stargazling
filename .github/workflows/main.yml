@@ -2,7 +2,7 @@ name: Daily Astronomical Update
 
 on:
   schedule:
-    - cron: '0 21 * * *' # 22:00 UTC = 01:00 TRT (Ertesi gün)
+    - cron: '0 22 * * *' # 22:00 UTC = 01:00 TRT (Ertesi gün)
   workflow_dispatch: # Manuel tetikleme için
 
 jobs:
@@ -33,4 +33,3 @@ jobs:
           git add data.json
           git commit -m "Auto-update data: $(date)" || echo "No changes to commit"
           git push
-

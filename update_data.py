@@ -62,9 +62,42 @@ def fetch_events():
     month = today.month
     year = today.year
 
+    # 2. Takımyıldızlar (Constellations)
+    try:
+        c_url = f"https://in-the-sky.org/data/constellations.php?town=752850&day={day}&month={month}&year={year}"
+        res = requests.get(c_url, timeout=10)
+        soup = BeautifulSoup(res.content, 'html.parser')
+        # 'Currently visible' olanları bul
+        con_list = soup.find_all('a', href=re.compile(r'constellation\.php\?id='))
+        if con_list:
+            top_cons = [c.text for c in con_list[:3]] # İlk 3 takımyıldız
+            events.append({
+                "date": f"{day}",
+                "month": f"{month}",
+                "title": "Görünür Takımyıldızlar",
+                "desc": f"Bu gece en iyi görülenler: {', '.join(top_cons)}."
+            })
+    except Exception as e:
+        print(f"Takımyıldız verisi alınamadı: {e}")
+
+    # Varsayılan (Eğer hiçbir şey çekilemezse boş kalmasın)
+    if not events:
+        events = [{"date": str(day), "month": "Oca", "title": "Gözlem Gecesi", "desc": "Gökyüzü haritasını kontrol etmeyi unutmayın."}]
+        
+    return events
+    
+def fetch_planets():
+    """Fetches astronomical events from In-The-Sky.org"""
+    print("Fetching monthly events from In-The-Sky...")
+    events = []
+    today = datetime.now()
+    day = today.day
+    month = today.month
+    year = today.year
+
     # 1. Gezegen Görünürlüğü (Planets)
     try:
-        p_url = "https://in-the-sky.org/data/planets.php"
+        p_url = f"https://in-the-sky.org/data/planets.php?town=752850&day={day}&month={month}&year={year}"
         res = requests.get(p_url, timeout=10)
         soup = BeautifulSoup(res.content, 'html.parser')
         # Sitedeki 'In the sky tonight' tablosunu bulmaya çalışıyoruz
@@ -78,30 +111,12 @@ def fetch_events():
                     p_info = cols[1].text.strip()
                     events.append({
                         "date": f"{day}",
-                        "month": "Oca", # Ay ismini dinamik yapabilirsiniz
+                        "month": f"{month}", # Ay ismini dinamik yapabilirsiniz
                         "title": f"Gezegen: {p_name}",
                         "desc": f"{p_name} bu gece {p_info}."
                     })
     except Exception as e:
         print(f"Gezegen verisi alınamadı: {e}")
-
-    # 2. Takımyıldızlar (Constellations)
-    try:
-        c_url = f"https://in-the-sky.org/data/constellations.php?day={day}&month={month}"
-        res = requests.get(c_url, timeout=10)
-        soup = BeautifulSoup(res.content, 'html.parser')
-        # 'Currently visible' olanları bul
-        con_list = soup.find_all('a', href=re.compile(r'constellation\.php\?id='))
-        if con_list:
-            top_cons = [c.text for c in con_list[:3]] # İlk 3 takımyıldız
-            events.append({
-                "date": f"{day}",
-                "month": "Oca",
-                "title": "Görünür Takımyıldızlar",
-                "desc": f"Bu gece en iyi görülenler: {', '.join(top_cons)}."
-            })
-    except Exception as e:
-        print(f"Takımyıldız verisi alınamadı: {e}")
 
     # Varsayılan (Eğer hiçbir şey çekilemezse boş kalmasın)
     if not events:
@@ -120,10 +135,7 @@ def update_json():
         "coordinates": f"{LAT}, {LON}",
         "weather": fetch_weather(),
         "events": fetch_events(),
-        "planets": [
-            {"name": "Jüpiter", "status": "Tüm gece görünür", "peak": "01:42", "badge": "Mükemmel", "class": "visible-high"},
-            {"name": "Satürn", "status": "23:47'ye kadar", "peak": "19:10", "badge": "İyi", "class": "visible-mid"}
-        ]
+        "planets": fetch_planets(),
     }
     
     with open(json_path, 'w', encoding='utf-8') as f:
@@ -132,5 +144,6 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 
 

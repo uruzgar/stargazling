@@ -1,7 +1,7 @@
 {
-    "last_updated": "2026-01-02T12:01:49.357389",
+    "last_updated": "2026-01-02T12:15:35.704442",
     "location": "Sakarya, Adapazarı",
-    "coordinates": "40.76, 30.36",
+    "coordinates": "40.7806, 30.4033",
     "weather": [
         {
             "hour": "13:00",
@@ -21,15 +21,15 @@
         },
         {
             "hour": "17:00",
-            "cloud": 2
+            "cloud": 12
         },
         {
             "hour": "18:00",
-            "cloud": 1
+            "cloud": 23
         },
         {
             "hour": "19:00",
-            "cloud": 35
+            "cloud": 1
         },
         {
             "hour": "20:00",
@@ -54,22 +54,10 @@
     ],
     "events": [
         {
-            "date": "3-4",
+            "date": "2",
             "month": "Oca",
-            "title": "Quadrantid Meteor Yağmuru",
-            "desc": "Yılın ilk büyük meteor yağmuru."
-        },
-        {
-            "date": "10",
-            "month": "Oca",
-            "title": "Jüpiter Karşıtlığı",
-            "desc": "Tüm gece en parlak haliyle görünür."
-        },
-        {
-            "date": "19",
-            "month": "Oca",
-            "title": "Yeni Ay",
-            "desc": "Gözlem için en karanlık gökyüzü."
+            "title": "Görünür Takımyıldızlar",
+            "desc": "Bu gece en iyi görülenler: Bootes », Cancer », Canes Venatici »."
         }
     ],
     "planets": [

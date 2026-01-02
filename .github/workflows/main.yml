@@ -1,0 +1,35 @@
+name: Daily Astronomical Update
+
+on:
+  schedule:
+    - cron: '0 22 * * *' # 22:00 UTC = 01:00 TRT (Ertesi gün)
+  workflow_dispatch: # Manuel tetikleme için
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Run Scraper
+        run: python update_data.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data.json
+          git commit -m "Auto-update data: $(date)" || echo "No changes to commit"
+          git push

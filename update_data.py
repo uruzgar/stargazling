@@ -129,13 +129,15 @@ def fetch_celestial_objects():
             graph_times.append(ts.from_datetime(dt_hour))
 
         bodies = {
-            'Güneş': eph['sun'],
             'Ay': eph['moon'],
             'Merkür': eph['mercury'],
             'Venüs': eph['venus'],
             'Mars': eph['mars'],
             'Jüpiter': eph['jupiter barycenter'],
             'Satürn': eph['saturn barycenter'],
+            'Uranüs': eph['uranus'],
+            'Neptün': eph['neptune'],
+            'Pluto': eph['pluto'],
         }
 
         for name, body in bodies.items():
@@ -227,12 +229,18 @@ def check_meteor_showers():
     # Simple static calendar check (can be refined)
     showers = [
         {"name": "Quadrantids", "start": (12, 28), "end": (1, 12), "peak": (1, 3)},
-        {"name": "Lyrids", "start": (4, 14), "end": (4, 30), "peak": (4, 22)},
-        {"name": "Eta Aquariids", "start": (4, 19), "end": (5, 28), "peak": (5, 6)},
+        {"name": "Lyrids", "start": (4, 16), "end": (4, 25), "peak": (4, 22)},
+        {"name": "Eta Aquariids", "start": (4, 19), "end": (5, 28), "peak": (5, 5)},
+        {"name": "Alpha Capricornids", "start": (7, 3), "end": (8, 15), "peak": (7, 30)},
+        {"name": "Delta Aquariids", "start": (7, 12), "end": (8, 23), "peak": (7, 30)},
         {"name": "Perseids", "start": (7, 17), "end": (8, 24), "peak": (8, 12)},
-        {"name": "Orionids", "start": (10, 2), "end": (11, 7), "peak": (10, 21)},
+        {"name": "Draconids", "start": (10, 6), "end": (10, 10), "peak": (10, 8)},
+        {"name": "Orionids", "start": (10, 2), "end": (11, 7), "peak": (10, 22)},
+        {"name": "Taurids (Southern)", "start": (9, 10), "end": (11, 20), "peak": (10, 10)},
+        {"name": "Taurids (Northern)", "start": (10, 20), "end": (12, 10), "peak": (11, 12)},
         {"name": "Leonids", "start": (11, 6), "end": (11, 30), "peak": (11, 17)},
-        {"name": "Geminids", "start": (12, 4), "end": (12, 17), "peak": (12, 14)},
+        {"name": "Geminids", "start": (12, 4), "end": (12, 20), "peak": (12, 14)},
+        {"name": "Ursids", "start": (12, 17), "end": (12, 26), "peak": (12, 22)}
     ]
     
     active = []
@@ -289,3 +297,4 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+

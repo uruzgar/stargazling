@@ -134,10 +134,7 @@ def fetch_celestial_objects():
             'Venüs': eph['venus'],
             'Mars': eph['mars'],
             'Jüpiter': eph['jupiter barycenter'],
-            'Satürn': eph['saturn barycenter'],
-            'Uranüs': eph['uranus'],
-            'Neptün': eph['neptune'],
-            'Pluto': eph['pluto'],
+            'Satürn': eph['saturn barycenter']
         }
 
         for name, body in bodies.items():
@@ -297,4 +294,5 @@ def update_json():
 
 if __name__ == "__main__":
     update_json()
+
 

@@ -1,744 +1,1342 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sakarya Gece Gözlem Rehberi</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;400;600;800&display=swap"
-        rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #05070a;
-            --card-bg: rgba(15, 20, 30, 0.7);
-            --accent-gold: #fbc02d;
-            --accent-blue: #4fc3f7;
-            --iss-red: #ff5252;
-            --text-primary: #ffffff;
-            --text-secondary: #b0bec5;
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stargazling — Gözlem Planlayıcısı</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06080f;
+    --bg2: #0c1020;
+    --bg3: #111826;
+    --card: #131c2e;
+    --card2: #192236;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0;
+    --muted: #7a8ba8;
+    --dim: #4a5a72;
+    --accent: #4fc3f7;
+    --accent2: #7c4dff;
+    --gold: #ffd54f;
+    --amber: #ffb74d;
+    --green: #69f0ae;
+    --red: #ff5252;
+    --pink: #f48fb1;
+    --teal: #4dd0e1;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+  /* STAR FIELD BACKGROUND */
+  #star-canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; opacity: 0.6;
+  }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-            background-image:
-                radial-gradient(circle at 20% 30%, rgba(79, 195, 247, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(251, 192, 45, 0.03) 0%, transparent 40%);
-        }
+  .page-wrap { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; }
 
-        .stars-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
+  /* HEADER */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 0 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #7c4dff, #0d1b3e);
+    border: 1.5px solid rgba(124,77,255,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .logo h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.5px; }
+  .logo h1 span { color: var(--accent); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .date-display { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .location-pill {
+    background: var(--card2); border: 1px solid var(--border2);
+    border-radius: 20px; padding: 6px 14px;
+    font-size: 12px; color: var(--muted);
+    display: flex; align-items: center; gap: 6px; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .location-pill:hover { border-color: var(--accent); color: var(--text); }
 
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: twinkle var(--duration) infinite ease-in-out;
-        }
+  /* LOCATION BAR */
+  .location-bar {
+    background: var(--card); border: 1px solid var(--border2);
+    border-radius: 16px; padding: 20px 24px;
+    margin-bottom: 24px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 16px; align-items: end;
+  }
+  .form-group label { display: block; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .form-group input, .form-group select {
+    width: 100%; background: var(--bg2);
+    border: 1px solid var(--border2); border-radius: 10px;
+    color: var(--text); font-family: var(--mono); font-size: 13px;
+    padding: 10px 14px; outline: none; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+  .form-group select option { background: var(--bg2); }
+  .btn-calc {
+    background: linear-gradient(135deg, #4fc3f7, #7c4dff);
+    border: none; border-radius: 10px;
+    color: #fff; font-family: var(--sans); font-size: 13px; font-weight: 600;
+    padding: 11px 24px; cursor: pointer; white-space: nowrap;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-calc:hover { opacity: 0.9; }
+  .btn-calc:active { transform: scale(0.97); }
 
-        @keyframes twinkle {
+  /* CONDITION STRIP */
+  .condition-strip {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;
+    margin-bottom: 24px;
+  }
+  .cond-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px 16px; text-align: center;
+  }
+  .cond-card .cond-icon { font-size: 22px; margin-bottom: 6px; }
+  .cond-card .cond-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 4px; }
+  .cond-card .cond-value { font-family: var(--mono); font-size: 14px; font-weight: 700; }
+  .cond-card .cond-value.good { color: var(--green); }
+  .cond-card .cond-value.ok { color: var(--gold); }
+  .cond-card .cond-value.bad { color: var(--red); }
 
-            0%,
-            100% {
-                opacity: 0.3;
-                transform: scale(1);
-            }
+  /* MAIN GRID */
+  .main-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; margin-bottom: 24px; }
 
-            50% {
-                opacity: 1;
-                transform: scale(1.2);
-            }
-        }
+  /* TIMELINE */
+  .timeline-card {
+    background: var(--card); border: 1px solid var(--border2);
+    border-radius: 16px; overflow: hidden;
+  }
+  .card-header {
+    padding: 18px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .card-subtitle { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .card-badge {
+    font-family: var(--mono); font-size: 10px;
+    background: rgba(79,195,247,0.1); color: var(--accent);
+    border: 1px solid rgba(79,195,247,0.2); border-radius: 6px; padding: 3px 8px;
+  }
+  .timeline-wrap { padding: 20px 24px; overflow-x: auto; }
+  #timeline-canvas { width: 100%; }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
+  /* CELESTIAL OBJECTS SIDEBAR */
+  .sidebar-card {
+    background: var(--card); border: 1px solid var(--border2);
+    border-radius: 16px; overflow: hidden;
+  }
+  .object-list { overflow-y: auto; max-height: 420px; }
+  .object-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 20px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background 0.15s;
+    position: relative;
+  }
+  .object-item:hover { background: rgba(255,255,255,0.03); }
+  .object-item:last-child { border-bottom: none; }
+  .obj-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border2);
+  }
+  .obj-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .obj-type { font-size: 11px; color: var(--muted); }
+  .obj-visibility {
+    margin-left: auto; text-align: right; flex-shrink: 0;
+  }
+  .obj-vis-time { font-family: var(--mono); font-size: 11px; color: var(--accent); }
+  .obj-mag { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .vis-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    position: absolute; top: 12px; right: 14px;
+  }
+  .vis-dot.visible { background: var(--green); }
+  .vis-dot.setting { background: var(--amber); }
+  .vis-dot.below { background: var(--dim); }
 
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
-            animation: fadeInDown 1s ease-out;
-        }
+  /* MOON PHASE */
+  .moon-card {
+    background: var(--card); border: 1px solid var(--border2);
+    border-radius: 16px; padding: 20px 24px; margin-bottom: 24px;
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px;
+  }
+  #moon-canvas-el { border-radius: 50%; background: var(--bg2); }
+  .moon-info h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .moon-info p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .moon-stats { display: flex; flex-direction: column; gap: 8px; }
+  .moon-stat { text-align: right; }
+  .moon-stat .ms-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
+  .moon-stat .ms-value { font-family: var(--mono); font-size: 13px; color: var(--gold); }
 
-        h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #fff 0%, var(--accent-blue) 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+  /* HORIZON CHART */
+  .horizon-card {
+    background: var(--card); border: 1px solid var(--border2);
+    border-radius: 16px; padding: 20px 24px; margin-bottom: 24px;
+  }
+  #horizon-canvas { width: 100%; border-radius: 8px; background: var(--bg2); margin-top: 16px; }
 
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            letter-spacing: 1px;
-        }
+  /* INFO CARDS SECTION */
+  .section-title {
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 16px; padding-top: 8px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        /* GANTT CHART STYLES */
-        .gantt-container {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            overflow-x: auto;
-        }
+  .info-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .info-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+  .info-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .ic-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+  .ic-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .ic-meta { flex: 1; }
+  .ic-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  .ic-type { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .ic-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px; font-family: var(--mono);
+    padding: 2px 8px; border-radius: 5px;
+    background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--border);
+  }
+  .tag.naked-eye { background: rgba(105,240,174,0.1); color: var(--green); border-color: rgba(105,240,174,0.2); }
+  .tag.binoculars { background: rgba(79,195,247,0.1); color: var(--accent); border-color: rgba(79,195,247,0.2); }
+  .tag.telescope { background: rgba(124,77,255,0.1); color: #b39ddb; border-color: rgba(124,77,255,0.2); }
+  .ic-desc { font-size: 12px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+  .ic-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ic-stat { background: var(--bg2); border-radius: 8px; padding: 8px 10px; }
+  .ic-stat-label { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .ic-stat-val { font-family: var(--mono); font-size: 12px; color: var(--text); }
+  .ic-visibility-bar { margin-top: 14px; }
+  .ic-vis-label { font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+  .vis-bar {
+    height: 6px; background: var(--bg2); border-radius: 3px;
+    overflow: hidden; position: relative;
+  }
+  .vis-bar-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width 0.6s ease;
+  }
+  .vis-bar-twilight {
+    position: absolute; top: 0; height: 100%; border-radius: 2px;
+    background: rgba(255,213,79,0.3);
+  }
 
-        .gantt-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
+  /* WEATHER HOUR STRIP */
+  .weather-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-top: 16px; }
+  .weather-hour {
+    flex-shrink: 0; width: 56px; background: var(--bg2);
+    border-radius: 10px; padding: 10px 6px; text-align: center;
+    border: 1px solid var(--border);
+  }
+  .wh-time { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+  .wh-icon { font-size: 18px; margin-bottom: 6px; }
+  .wh-cloud { font-family: var(--mono); font-size: 11px; color: var(--text); margin-bottom: 2px; }
+  .wh-seeing { font-size: 10px; }
+  .seeing-1 { color: var(--green); }
+  .seeing-2 { color: #a5d6a7; }
+  .seeing-3 { color: var(--gold); }
+  .seeing-4 { color: var(--amber); }
+  .seeing-5 { color: var(--red); }
 
-        .gantt-header h2 {
-            font-family: 'Outfit', sans-serif;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+  /* TOOLTIP */
+  #tooltip {
+    position: fixed; pointer-events: none; z-index: 1000;
+    background: var(--card2); border: 1px solid var(--border2);
+    border-radius: 10px; padding: 10px 14px;
+    font-size: 12px; color: var(--text);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    opacity: 0; transition: opacity 0.15s;
+    max-width: 220px;
+  }
+  #tooltip.show { opacity: 1; }
+  #tooltip strong { color: var(--accent); }
 
-        .chart-wrapper {
-            position: relative;
-            min-width: 800px;
-            height: 500px;
-            /* Increased height */
-            background: #0a0e17;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+  /* TIME CURSOR */
+  .time-cursor-info {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    text-align: center; margin-top: 8px;
+  }
 
-        /* Dynamic Weather Background */
+  /* Responsive */
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .condition-strip { grid-template-columns: repeat(3, 1fr); }
+    .location-bar { grid-template-columns: 1fr 1fr; }
+    .moon-card { grid-template-columns: auto 1fr; }
+    .moon-stats { flex-direction: row; flex-wrap: wrap; gap: 12px; justify-content: flex-start; }
+  }
+  @media (max-width: 600px) {
+    .condition-strip { grid-template-columns: repeat(2, 1fr); }
+    .location-bar { grid-template-columns: 1fr; }
+  }
 
-        .weather-hour {
-            flex: 1;
-            height: 100%;
-            transition: background 0.3s;
-        }
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 3px; }
 
-        /* Time Axis (Bottom) */
+  /* ANIMATIONS */
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-in { animation: fadeInUp 0.5s ease forwards; }
+  .fade-in:nth-child(2) { animation-delay: 0.05s; }
+  .fade-in:nth-child(3) { animation-delay: 0.1s; }
+  .fade-in:nth-child(4) { animation-delay: 0.15s; }
 
-        .time-label {
-            flex: 1;
-            text-align: left;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
-            padding-left: 4px;
-            line-height: 30px;
-        }
+  .no-data { color: var(--dim); font-size: 13px; text-align: center; padding: 30px; }
 
-        /* Objects Layer */
-        .objects-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            bottom: 30px;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-            padding-top: 10px;
-        }
-
-        .object-row {
-            position: relative;
-            height: 30px;
-            /* Reduced height */
-            width: 100%;
-            display: flex;
-            align-items: center;
-        }
-
-        .object-label-container {
-            width: 150px;
-            min-width: 150px;
-            padding-right: 15px;
-            text-align: right;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-            font-size: 0.85rem;
-            font-weight: 500;
-            z-index: 2;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        .object-timeline-track {
-            flex-grow: 1;
-            position: relative;
-            height: 100%;
-            /* This track now aligns perfectly with the weather background */
-        }
-
-        .object-bar {
-            position: absolute;
-            height: 8px;
-            /* Thinner bars */
-            top: 50%;
-            transform: translateY(-50%);
-            border-radius: 4px;
-            background: var(--accent-blue);
-            box-shadow: 0 0 8px rgba(79, 195, 247, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .object-bar:hover {
-            height: 10px;
-            box-shadow: 0 0 12px rgba(79, 195, 247, 0.6);
-            cursor: pointer;
-        }
-
-        /* Shift chart area right - align with track */
-        .weather-bg {
-            position: absolute;
-            top: 0;
-            left: 150px;
-            /* Matches label width */
-            right: 0;
-            bottom: 0;
-            display: flex;
-            z-index: 0;
-        }
-
-        .time-axis {
-            position: absolute;
-            bottom: 0;
-            left: 150px;
-            right: 0;
-            height: 30px;
-            display: flex;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-
-
-        /* Lists Section */
-        .lists-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .lists-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .list-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 1.5rem;
-            border: 1px solid var(--glass-border);
-        }
-
-        .list-card h3 {
-            color: var(--accent-gold);
-            margin-bottom: 1rem;
-        }
-
-        .list-card ul {
-            list-style: none;
-        }
-
-        .list-card li {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-        }
-
-        .list-card li:last-child {
-            border-bottom: none;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
+  /* Legend */
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+</style>
 </head>
-
 <body>
-    <div class="stars-container" id="stars"></div>
 
-    <div class="container">
-        <header>
-            <h1>Gece Gözlem Rehberi</h1>
-            <p class="subtitle">Adapazarı, Sakarya (40.76° N, 30.36° E)</p>
-        </header>
+<canvas id="star-canvas"></canvas>
 
-        <!-- Custom Gantt Chart -->
-        <div class="gantt-container">
-            <div class="gantt-header">
-                <h2><span>🔭</span> Gözlem Zaman Çizelgesi (18:00 - 06:00)</h2>
-                <div style="font-size: 0.8rem; color: var(--text-secondary);">
-                    <span style="color:var(--iss-red)">● ISS</span> &nbsp;
-                    <span style="color:var(--accent-blue)">● Obje</span> &nbsp;
-                    <span
-                        style="display:inline-block; width:10px; height:10px; background:#1b2434; border:1px solid #555"></span>
-                    Temiz &nbsp;
-                    <span
-                        style="display:inline-block; width:10px; height:10px; background:rgba(200,200,200,0.5); border:1px solid #555"></span>
-                    Bulutlu
-                </div>
-            </div>
-            <div class="chart-wrapper" id="chartWrapper">
-                <!-- Layers injected by JS -->
-                <div class="weather-bg" id="weatherBg"></div>
-                <div class="time-axis" id="timeAxis"></div>
-                <div class="objects-layer" id="objectsLayer"></div>
-                <div class="iss-layer" id="issLayer"></div>
-            </div>
+<div class="page-wrap">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">★</div>
+      <div>
+        <h1>Star<span>gazling</span></h1>
+        <div style="font-size:11px;color:var(--muted)">Gözlem Planlayıcısı</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="date-display" id="live-time">—</div>
+    </div>
+  </header>
+
+  <!-- LOCATION & DATE BAR -->
+  <div class="location-bar">
+    <div class="form-group">
+      <label>Enlem (Lat)</label>
+      <input type="number" id="inp-lat" value="40.76" step="0.01" min="-90" max="90">
+    </div>
+    <div class="form-group">
+      <label>Boylam (Lon)</label>
+      <input type="number" id="inp-lon" value="30.36" step="0.01" min="-180" max="180">
+    </div>
+    <div class="form-group">
+      <label>Tarih</label>
+      <input type="date" id="inp-date">
+    </div>
+    <button class="btn-calc" onclick="recalculate()">⟳ Hesapla</button>
+  </div>
+
+  <!-- CONDITIONS STRIP -->
+  <div class="condition-strip" id="cond-strip">
+    <div class="cond-card"><div class="cond-icon">🌙</div><div class="cond-label">Ay Parlaklığı</div><div class="cond-value" id="c-moonphase">—</div></div>
+    <div class="cond-card"><div class="cond-icon">☁️</div><div class="cond-label">Bulutluluk</div><div class="cond-value" id="c-cloud">—</div></div>
+    <div class="cond-card"><div class="cond-icon">🌆</div><div class="cond-label">Gün Batımı</div><div class="cond-value" id="c-sunset">—</div></div>
+    <div class="cond-card"><div class="cond-icon">🌄</div><div class="cond-label">Gün Doğumu</div><div class="cond-value" id="c-sunrise">—</div></div>
+    <div class="cond-card"><div class="cond-icon">🔭</div><div class="cond-label">En İyi Gözlem</div><div class="cond-value" id="c-besttime">—</div></div>
+    <div class="cond-card"><div class="cond-icon">👁️</div><div class="cond-label">Görüş Kalitesi</div><div class="cond-value" id="c-seeing">—</div></div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+    <!-- TIMELINE -->
+    <div class="timeline-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">⏱ Gece Zaman Çizelgesi</div>
+          <div class="card-subtitle">Gök cisimlerinin saate göre görünürlüğü</div>
         </div>
-
-        <!-- Lists -->
-        <div class="lists-grid">
-            <div class="list-card">
-                <h3>👁️ Çıplak Gözle Görülebilenler</h3>
-                <ul id="nakedList"></ul>
-            </div>
-            <div class="list-card">
-                <h3>🔭 Dürbünle Görülebilenler</h3>
-                <ul id="binocularList"></ul>
-            </div>
+        <div class="card-badge" id="obs-window">Hesaplanıyor…</div>
+      </div>
+      <div class="timeline-wrap">
+        <canvas id="timeline-canvas" height="320"></canvas>
+        <div class="time-cursor-info" id="cursor-info">Grafiğin üzerine gelin</div>
+        <div class="legend" style="margin-top:14px">
+          <div class="legend-item"><div class="legend-dot" style="background:#69f0ae"></div>Çıplak gözle</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7"></div>Dürbünle</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#b39ddb"></div>Teleskopla</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(255,213,79,0.3)"></div>Alacakaranlık</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(255,82,82,0.3)"></div>Ay ışığı etkisi</div>
         </div>
-
-        <footer>
-            <p>Veriler Güneş Sistemi Dinamikleri ve Skymaps.com baz alınarak otomatik oluşturulmuştur.</p>
-        </footer>
+      </div>
+      <!-- WEATHER STRIP -->
+      <div style="padding:0 24px 20px">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:10px">Saatlik Hava & Görüş Koşulları</div>
+        <div class="weather-strip" id="weather-strip"></div>
+      </div>
     </div>
 
-    <!-- Moon Widget -->
-    <div id="moonContainer"
-        style="position:absolute; top:20px; right:20px; text-align:center; animation: fadeInDown 1s ease-out;">
-        <div id="moonIcon" style="font-size:3rem; margin-bottom:5px;">🌑</div>
-        <div id="moonText" style="font-size:0.8rem; color:var(--text-secondary);">--</div>
-    </div>
-
-    <script>
-        // --- Star Animation ---
-        function initStars() {
-            const container = document.getElementById('stars');
-            for (let i = 0; i < 150; i++) {
-                const star = document.createElement('div');
-                container.appendChild(star);
-                // Simple static stars for performance or complex logic
-                star.className = 'star';
-                const size = Math.random() * 2 + 1;
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.width = size + 'px';
-                star.style.height = size + 'px';
-                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
-            }
-        }
-
-        // --- Utils ---
-        function timeToPercent(timeStr) {
-            const [h, m] = timeStr.split(':').map(Number);
-            let hour = h;
-            if (hour >= 18) {
-                hour = hour - 18;
-            } else if (hour < 18) {
-                hour = hour + 6;
-            }
-            const totalMinutes = (hour * 60) + m;
-            const percentage = (totalMinutes / (12 * 60)) * 100;
-            return Math.max(0, Math.min(100, percentage));
-        }
-
-        // --- Render Functions ---
-        function renderWeather(hourlyData) {
-            const bg = document.getElementById('weatherBg');
-            const axis = document.getElementById('timeAxis');
-            bg.innerHTML = '';
-            axis.innerHTML = '';
-
-            hourlyData.forEach(d => {
-                const div = document.createElement('div');
-                div.className = 'weather-hour';
-                const alpha = Math.min(d.cloud, 80) / 100 * 0.5;
-                div.style.background = `rgba(200, 220, 255, ${alpha})`;
-                // Enhanced Tooltip
-                div.title = `Saat ${d.hour}\nBulut: %${d.cloud}\nGörüş: ${d.visibility ? d.visibility / 1000 + 'km' : '?'}\nNem: %${d.humidity || '?'}`;
-                bg.appendChild(div);
-
-                const label = document.createElement('div');
-                label.className = 'time-label';
-                label.innerText = d.hour;
-                axis.appendChild(label);
-            });
-        }
-
-        function renderMoonPhase(moonData) {
-            if (!moonData) return;
-            const icon = document.getElementById('moonIcon');
-            const text = document.getElementById('moonText');
-
-            // Simple emoji map based on phase calc from backend
-            // Or just a generic moon if phase logic is complex
-            // We use the 'angle' or 'illumination' to pick best emoji if we want
-            // 0=New, 90=First Q, 180=Full, 270=Last Q
-            const p = moonData.angle % 360;
-            let emoji = '🌑';
-            if (p < 22.5) emoji = '🌑';
-            else if (p < 67.5) emoji = '🌒';
-            else if (p < 112.5) emoji = '🌓';
-            else if (p < 157.5) emoji = '🌔';
-            else if (p < 202.5) emoji = '🌕';
-            else if (p < 247.5) emoji = '🌖';
-            else if (p < 292.5) emoji = '🌗';
-            else emoji = '🌘';
-
-            icon.innerText = emoji;
-            text.innerText = `${moonData.name} (%${moonData.illumination})`;
-        }
-
-        function renderObjects(objects, iss, meteors) {
-            const layer = document.getElementById('objectsLayer');
-            layer.innerHTML = '';
-
-            const visibleObjects = objects.filter(o => o.visible);
-
-            visibleObjects.forEach(obj => {
-                const row = document.createElement('div');
-                row.className = 'object-row';
-
-                // Label Container
-                const labelBox = document.createElement('div');
-                labelBox.className = 'object-label-container';
-                labelBox.innerText = obj.name;
-                row.appendChild(labelBox);
-
-                // Timeline Track
-                const track = document.createElement('div');
-                track.className = 'object-timeline-track';
-                row.appendChild(track);
-
-                // Bar
-                const pRise = timeToPercent(obj.rise);
-                const pSet = timeToPercent(obj.set);
-                const bar = document.createElement('div');
-                bar.className = 'object-bar';
-
-                // Add click handler for details
-                bar.onclick = () => showDetails(obj);
-
-                let left = 0, width = 0;
-                if (pSet < pRise) {
-                    left = pRise;
-                    width = 100 - pRise;
-                } else {
-                    left = pRise;
-                    width = pSet - pRise;
-                }
-
-                bar.style.left = `${left}%`;
-                bar.style.width = `${width}%`;
-                track.appendChild(bar);
-
-                layer.appendChild(row);
-            });
-
-            // Render ISS Row (if passes exist)
-            if (iss && iss.length > 0) {
-                const row = document.createElement('div');
-                row.className = 'object-row';
-
-                const labelBox = document.createElement('div');
-                labelBox.className = 'object-label-container';
-                labelBox.innerText = "ISS 🛰️";
-                labelBox.style.color = "var(--iss-red)";
-                row.appendChild(labelBox);
-
-                const track = document.createElement('div');
-                track.className = 'object-timeline-track';
-
-                iss.forEach(pass => {
-                    const pStart = timeToPercent(pass.start);
-                    const pEnd = timeToPercent(pass.end);
-
-                    const bar = document.createElement('div');
-                    // Reusing object-bar class for shape, but overriding color
-                    bar.className = 'object-bar';
-                    bar.style.background = "var(--iss-red)";
-                    bar.style.boxShadow = "0 0 8px var(--iss-red)";
-
-                    bar.style.left = `${pStart}%`;
-                    bar.style.width = `${Math.max(pEnd - pStart, 1)}%`;
-
-                    // Specific tooltip/alert for ISS
-                    bar.onclick = () => alert(`ISS Geçişi\nBaşlangıç: ${pass.start}\nBitiş: ${pass.end}\nMaksimum Yükseklik: ${pass.max_elev}°`);
-
-                    track.appendChild(bar);
-                });
-
-                row.appendChild(track);
-                layer.appendChild(row);
-            }
-
-            // Render Meteors if any
-            if (meteors && meteors.length > 0) {
-                meteors.forEach(shower => {
-                    const row = document.createElement('div');
-                    row.className = 'object-row';
-
-                    const labelBox = document.createElement('div');
-                    labelBox.className = 'object-label-container';
-                    labelBox.innerText = shower + " 🌠";
-                    labelBox.style.color = "var(--accent-gold)";
-                    row.appendChild(labelBox);
-
-                    const track = document.createElement('div');
-                    track.className = 'object-timeline-track';
-
-                    // Meteor shower usually lasts all night effectively for this chart
-                    const bar = document.createElement('div');
-                    bar.className = 'object-bar';
-                    bar.style.backgroundColor = "rgba(251, 192, 45, 0.4)";
-                    bar.style.left = "0%";
-                    bar.style.width = "100%";
-                    bar.onclick = () => alert("Aktif Meteor Yağmuru! Gece boyunca gözlem şansı var.");
-
-                    track.appendChild(bar);
-                    row.appendChild(track);
-                    layer.appendChild(row);
-                });
-            }
-        }
-
-        function renderLists(lists) {
-            const naked = document.getElementById('nakedList');
-            const bino = document.getElementById('binocularList');
-
-            naked.innerHTML = '';
-            bino.innerHTML = '';
-
-            lists.naked_eye.forEach(item => {
-                const li = document.createElement('li');
-                li.innerText = `${item.name} (Mag: ${item.mag})`;
-                naked.appendChild(li);
-            });
-
-            lists.binocular.forEach(item => {
-                const li = document.createElement('li');
-                li.innerText = `${item.name} (Mag: ${item.mag})`;
-                bino.appendChild(li);
-            });
-        }
-
-        function showDetails(obj) {
-            const modal = document.getElementById('detailModal');
-            document.getElementById('modalTitle').innerText = obj.name;
-            document.getElementById('modalInfo').innerText =
-                `Doğuş: ${obj.rise} | Batış: ${obj.set} | Uzaklık: ${obj.distance_km || '?'} km`;
-
-            modal.style.display = 'flex';
-            drawAltitudeGraph(obj.altitude_graph);
-        }
-
-        function closeModal() {
-            document.getElementById('detailModal').style.display = 'none';
-        }
-
-        function drawAltitudeGraph(altitudes) {
-            const canvas = document.getElementById('altGraph');
-            const ctx = canvas.getContext('2d');
-            const w = canvas.width;
-            const h = canvas.height;
-            const padding = 30;
-
-            ctx.clearRect(0, 0, w, h);
-
-            if (!altitudes || altitudes.length === 0) {
-                ctx.fillStyle = "white";
-                ctx.fillText("Grafik verisi yok", 10, 50);
-                return;
-            }
-
-            // Draw axes
-            ctx.strokeStyle = '#555';
-            ctx.beginPath();
-            ctx.moveTo(padding, 20); ctx.lineTo(padding, h - padding);
-            ctx.lineTo(w - 10, h - padding);
-            ctx.stroke();
-
-            // Plot points
-            ctx.strokeStyle = '#4fc3f7';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-
-            const maxAlt = 90;
-            const xStep = (w - (padding + 10)) / (altitudes.length - 1);
-
-            altitudes.forEach((alt, i) => {
-                const x = padding + i * xStep;
-                const y = (h - padding) - (alt / maxAlt * (h - padding - 20));
-
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-
-                // Dots
-                ctx.fillStyle = '#fbc02d';
-                ctx.fillRect(x - 2, y - 2, 4, 4);
-
-                // Time Labels (X-Axis)
-                if (i % 2 === 0) {
-                    let hour = (18 + i) % 24;
-                    let timeStr = String(hour).padStart(2, '0') + ":00";
-
-                    ctx.fillStyle = '#b0bec5';
-                    ctx.font = "10px Inter";
-                    ctx.textAlign = "center";
-                    ctx.fillText(timeStr, x, h - 10);
-                }
-            });
-            ctx.stroke();
-        }
-
-        async function loadData() {
-            try {
-                const response = await fetch('data.json');
-                const data = await response.json();
-
-                // Metadata
-                if (data.last_updated) {
-                    document.querySelector('.subtitle').innerHTML += ` | Güncelleme: ${new Date(data.last_updated).toLocaleString('tr-TR')}`;
-                }
-
-                renderWeather(data.weather_hourly);
-                renderObjects(data.objects, data.iss_passes, data.meteor_showers);
-                renderLists(data.lists);
-
-                if (data.moon_phase) {
-                    renderMoonPhase(data.moon_phase);
-                }
-
-                renderCurrentTime();
-            } catch (err) {
-                console.error(err);
-                document.querySelector('.gantt-container').innerHTML = `<p style="padding:1rem; color:red">Veri yüklenemedi. Lütfen Console'u kontrol edin.</p>`;
-            }
-        }
-
-        function renderCurrentTime() {
-            const now = new Date();
-            const h = now.getHours();
-            const m = now.getMinutes();
-
-            // Show only if within the chart range (18:00 - 06:00)
-            if (h >= 18 || h < 6) {
-                const timeStr = `${h}:${m}`;
-                const pct = timeToPercent(timeStr);
-
-                const wrapper = document.getElementById('chartWrapper');
-
-                // Remove existing if any
-                const existing = document.getElementById('currentTimeLine');
-                if (existing) existing.remove();
-
-                const line = document.createElement('div');
-                line.id = 'currentTimeLine';
-                line.style.position = 'absolute';
-                line.style.top = '0';
-                line.style.bottom = '30px';
-                // Calc left position accounting for 150px label offset
-                line.style.left = `calc(150px + (100% - 150px) * ${pct / 100})`;
-                line.style.width = '2px';
-                line.style.background = 'rgba(255, 82, 82, 0.8)';
-                line.style.zIndex = '20';
-                line.style.pointerEvents = 'none';
-                line.style.boxShadow = '0 0 8px rgba(255, 82, 82, 0.5)';
-
-                const label = document.createElement('div');
-                label.innerText = `Şu an (${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')})`;
-                label.style.position = 'absolute';
-                label.style.top = '-25px';
-                label.style.left = '50%';
-                label.style.transform = 'translateX(-50%)';
-                label.style.fontSize = '0.75rem';
-                label.style.fontWeight = 'bold';
-                label.style.color = '#ff5252';
-                label.style.whiteSpace = 'nowrap';
-                label.style.background = 'rgba(10,14,23,0.8)';
-                label.style.padding = '2px 6px';
-                label.style.borderRadius = '4px';
-                label.style.border = '1px solid rgba(255, 82, 82, 0.4)';
-
-                line.appendChild(label);
-                wrapper.appendChild(line);
-            }
-        }
-
-        window.onload = () => {
-            initStars();
-            loadData();
-        };
-    </script>
-
-    <!-- Detail Modal -->
-    <div id="detailModal"
-        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; justify-content:center; align-items:center;">
-        <div
-            style="background:var(--card-bg); padding:2rem; border-radius:12px; border:1px solid var(--accent-blue); width:90%; max-width:500px; position:relative;">
-            <button onclick="closeModal()"
-                style="position:absolute; top:10px; right:10px; background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
-            <h2 id="modalTitle" style="color:var(--accent-blue); margin-bottom:10px;">Gezegen</h2>
-            <p id="modalInfo" style="color:var(--text-secondary); margin-bottom:20px; font-size:0.9rem;">Detaylar...</p>
-            <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:8px;">
-                <h4 style="color:#ddd; margin-bottom:5px;">Yükseklik Grafiği (18:00 - 06:00)</h4>
-                <canvas id="altGraph" width="400" height="200" style="width:100%;"></canvas>
-            </div>
+    <!-- SIDEBAR -->
+    <div>
+      <!-- Moon Card -->
+      <div class="moon-card" style="margin-bottom:16px">
+        <canvas id="moon-canvas-el" width="70" height="70"></canvas>
+        <div class="moon-info">
+          <h3 id="moon-phase-name">—</h3>
+          <p id="moon-phase-desc" style="font-size:11px;color:var(--muted);margin-top:4px">—</p>
         </div>
+        <div class="moon-stats">
+          <div class="moon-stat">
+            <div class="ms-label">Aydınlanma</div>
+            <div class="ms-value" id="moon-illum">—</div>
+          </div>
+          <div class="moon-stat">
+            <div class="ms-label">Doğuş</div>
+            <div class="ms-value" id="moon-rise">—</div>
+          </div>
+          <div class="moon-stat">
+            <div class="ms-label">Batış</div>
+            <div class="ms-value" id="moon-set">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Objects list -->
+      <div class="sidebar-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">✦ Gök Cisimleri</div>
+            <div class="card-subtitle">Bu gece görünür olanlar</div>
+          </div>
+        </div>
+        <div class="object-list" id="object-list">
+          <div class="no-data">Hesaplanıyor…</div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- HORIZON CHART -->
+  <div class="horizon-card">
+    <div class="card-header" style="padding:0 0 0 0;margin-bottom:0">
+      <div>
+        <div class="card-title">📐 Ufuk Yükseklik Grafiği</div>
+        <div class="card-subtitle">Gece boyunca irtifa değişimi (gözlemlenebilir = >10°)</div>
+      </div>
+    </div>
+    <canvas id="horizon-canvas" height="200"></canvas>
+  </div>
+
+  <!-- INFO CARDS -->
+  <div class="section-title">Gözlemlenebilir Cisimler Hakkında</div>
+  <div class="info-cards" id="info-cards"></div>
+</div>
+
+<!-- TOOLTIP -->
+<div id="tooltip"></div>
+
+<script>
+// =============================================
+// ASTRONOMICAL CALCULATIONS
+// =============================================
+
+const DEG = Math.PI / 180;
+const RAD = 180 / Math.PI;
+
+function toJD(date) {
+  const y = date.getUTCFullYear(), m = date.getUTCMonth() + 1, d = date.getUTCDate();
+  const h = date.getUTCHours() + date.getUTCMinutes() / 60;
+  let jd = 367 * y - Math.floor(7 * (y + Math.floor((m + 9) / 12)) / 4)
+    + Math.floor(275 * m / 9) + d + 1721013.5 + h / 24;
+  return jd;
+}
+
+function sidereal(jd, lon) {
+  const T = (jd - 2451545.0) / 36525;
+  let gst = 280.46061837 + 360.98564736629 * (jd - 2451545) +
+    0.000387933 * T * T - T * T * T / 38710000;
+  gst = ((gst % 360) + 360) % 360;
+  return (gst + lon + 360) % 360;
+}
+
+function sunPosition(jd) {
+  const n = jd - 2451545.0;
+  const L = (280.460 + 0.9856474 * n) % 360;
+  const g = (357.528 + 0.9856003 * n) * DEG;
+  const lambda = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * DEG;
+  const eps = 23.439 * DEG;
+  const ra = Math.atan2(Math.cos(eps) * Math.sin(lambda), Math.cos(lambda)) * RAD;
+  const dec = Math.asin(Math.sin(eps) * Math.sin(lambda)) * RAD;
+  return { ra: (ra + 360) % 360, dec };
+}
+
+function altAz(ra, dec, lat, lst) {
+  const ha = (lst - ra + 360) % 360;
+  const h = ha * DEG, d = dec * DEG, l = lat * DEG;
+  const sinAlt = Math.sin(d) * Math.sin(l) + Math.cos(d) * Math.cos(l) * Math.cos(h);
+  const alt = Math.asin(Math.max(-1, Math.min(1, sinAlt))) * RAD;
+  const cosAz = (Math.sin(d) - Math.sin(alt * DEG) * Math.sin(l)) / (Math.cos(alt * DEG) * Math.cos(l));
+  const az = (Math.acos(Math.max(-1, Math.min(1, cosAz))) * RAD * (Math.sin(h) > 0 ? -1 : 1) + 360) % 360;
+  return { alt, az };
+}
+
+function sunriseSet(jd, lat, lon) {
+  // approximate
+  const n = jd - 2451545.0;
+  const L = (280.460 + 0.9856474 * n) % 360;
+  const g = (357.528 + 0.9856003 * n) * DEG;
+  const lambda = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g));
+  const eps = 23.439;
+  const dec = Math.asin(Math.sin(eps * DEG) * Math.sin(lambda * DEG)) * RAD;
+  const cosH = (Math.sin(-0.8333 * DEG) - Math.sin(lat * DEG) * Math.sin(dec * DEG))
+    / (Math.cos(lat * DEG) * Math.cos(dec * DEG));
+  if (Math.abs(cosH) > 1) return { rise: null, set: null };
+  const H = Math.acos(cosH) * RAD;
+  const ra = Math.atan2(Math.cos(eps * DEG) * Math.sin(lambda * DEG), Math.cos(lambda * DEG)) * RAD;
+  const transit = (ra - lon + 360) % 360 / 15 + 12;
+  const rise = ((transit - H / 15 + 24) % 24);
+  const set = ((transit + H / 15 + 24) % 24);
+  return { rise, set };
+}
+
+function twilight(jd, lat, lon, angle) {
+  const n = jd - 2451545.0;
+  const L = (280.460 + 0.9856474 * n) % 360;
+  const g = (357.528 + 0.9856003 * n) * DEG;
+  const lambda = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g));
+  const eps = 23.439;
+  const dec = Math.asin(Math.sin(eps * DEG) * Math.sin(lambda * DEG)) * RAD;
+  const ra = Math.atan2(Math.cos(eps * DEG) * Math.sin(lambda * DEG), Math.cos(lambda * DEG)) * RAD;
+  const cosH = (Math.sin(angle * DEG) - Math.sin(lat * DEG) * Math.sin(dec * DEG))
+    / (Math.cos(lat * DEG) * Math.cos(dec * DEG));
+  if (Math.abs(cosH) > 1) return { dusk: null, dawn: null };
+  const H = Math.acos(cosH) * RAD;
+  const transit = (ra * RAD - lon + 360) % 360 / 15 + 12;
+  return {
+    dusk: ((transit + H / 15 + 24) % 24),
+    dawn: ((transit - H / 15 + 24) % 24)
+  };
+}
+
+// Moon phase calculation
+function moonPhase(jd) {
+  const k = (jd - 2451550.1) / 29.530588853;
+  const phase = ((k % 1) + 1) % 1;
+  const illum = (1 - Math.cos(phase * 2 * Math.PI)) / 2;
+  return { phase, illum };
+}
+
+function moonRiseSet(jd, lat, lon) {
+  const n = jd - 2451545.0;
+  const L = (218.316 + 13.176396 * n) % 360;
+  const M = (134.963 + 13.064993 * n) % 360;
+  const F = (93.272 + 13.229350 * n) % 360;
+  const lambda = L + 6.289 * Math.sin(M * DEG);
+  const beta = 5.128 * Math.sin(F * DEG);
+  const eps = 23.439;
+  const ra = Math.atan2(Math.cos(eps * DEG) * Math.sin(lambda * DEG) - Math.tan(beta * DEG) * Math.sin(eps * DEG), Math.cos(lambda * DEG)) * RAD;
+  const dec = Math.asin(Math.sin(beta * DEG) * Math.cos(eps * DEG) + Math.cos(beta * DEG) * Math.sin(eps * DEG) * Math.sin(lambda * DEG)) * RAD;
+  const cosH = (Math.sin(0.5 * DEG) - Math.sin(lat * DEG) * Math.sin(dec * DEG))
+    / (Math.cos(lat * DEG) * Math.cos(dec * DEG));
+  if (Math.abs(cosH) > 1) return { rise: 0, set: 24, ra, dec };
+  const H = Math.acos(Math.max(-1, Math.min(1, cosH))) * RAD;
+  const transit = ((ra - lon + 360) % 360) / 15 + 0;
+  return {
+    rise: ((transit - H / 15 + 24) % 24),
+    set: ((transit + H / 15 + 24) % 24),
+    ra, dec
+  };
+}
+
+// Planet approximate positions (simplified)
+function planetPositions(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  return {
+    mercury: {
+      L: (252.25 + 149474.0722 * T) % 360,
+      ra: (252.25 + 149474.0722 * T + 23.4 * Math.sin((168.6 + 87379.28 * T) * DEG)) % 360,
+      dec: 7.0 * Math.sin(((252.25 + 149474 * T) - 77.46) * DEG),
+      mag: -0.5, maxAlt: 30
+    },
+    venus: {
+      L: (181.98 + 58519.2130 * T) % 360,
+      ra: (181.98 + 58519.213 * T + 0.7758 * Math.sin((212.7 + 58517.8 * T) * DEG)) % 360,
+      dec: 3.4 * Math.sin(((181.98 + 58519 * T) - 131.56) * DEG),
+      mag: -4.4, maxAlt: 45
+    },
+    mars: {
+      ra: (355.45 + 19141.0 * T + 10.691 * Math.sin((19.37 + 19141.0 * T) * DEG)) % 360,
+      dec: 1.85 * Math.sin(((355.45 + 19141 * T) - 49.56) * DEG),
+      mag: 0.0, maxAlt: 70
+    },
+    jupiter: {
+      ra: (34.33 + 3036.0 * T + 5.55 * Math.sin((20.02 + 3036.0 * T) * DEG)) % 360,
+      dec: 1.31 * Math.sin(((34.33 + 3036 * T) - 100.46) * DEG),
+      mag: -2.5, maxAlt: 80
+    },
+    saturn: {
+      ra: (50.07 + 1223.5 * T + 6.11 * Math.sin((317.02 + 1222.1 * T) * DEG)) % 360,
+      dec: 2.49 * Math.sin(((50.07 + 1223.5 * T) - 113.67) * DEG),
+      mag: 0.7, maxAlt: 75
+    },
+    uranus: {
+      ra: (314.05 + 429.0 * T) % 360,
+      dec: 0.77 * Math.sin(((314.05 + 429 * T) - 74.01) * DEG),
+      mag: 5.7, maxAlt: 65
+    },
+    neptune: {
+      ra: (304.35 + 219.9 * T) % 360,
+      dec: 1.77 * Math.sin(((304.35 + 219.9 * T) - 131.79) * DEG),
+      mag: 7.9, maxAlt: 55
+    }
+  };
+}
+
+// Deep sky objects (fixed coords)
+const DEEP_SKY = [
+  { id: 'M31', name: 'M31 Andromeda Galaksisi', ra: 10.68, dec: 41.27, mag: 3.4, type: 'Galaksi', icon: '🌌', obs: 'naked-eye', color: '#69f0ae' },
+  { id: 'M42', name: 'M42 Orion Bulutsusu', ra: 83.82, dec: -5.39, mag: 4.0, type: 'Bulutsu', icon: '🌫️', obs: 'naked-eye', color: '#69f0ae' },
+  { id: 'Pleiades', name: 'Pleiades (Ülker)', ra: 56.75, dec: 24.11, mag: 1.6, type: 'Açık Küme', icon: '✨', obs: 'naked-eye', color: '#69f0ae' },
+  { id: 'M45', name: 'Hyades Kümesi', ra: 66.75, dec: 15.87, mag: 0.5, type: 'Açık Küme', icon: '⭐', obs: 'naked-eye', color: '#69f0ae' },
+  { id: 'M13', name: 'M13 Herkül Kümesi', ra: 250.42, dec: 36.46, mag: 5.8, type: 'Küresel Küme', icon: '🔵', obs: 'binoculars', color: '#4fc3f7' },
+  { id: 'M57', name: 'M57 Yüzük Bulutsusu', ra: 283.4, dec: 33.03, mag: 8.8, type: 'Gezegen Bulutsusu', icon: '💍', obs: 'telescope', color: '#b39ddb' },
+  { id: 'M81', name: 'M81 Bode Galaksisi', ra: 148.89, dec: 69.07, mag: 6.9, type: 'Galaksi', icon: '🌀', obs: 'binoculars', color: '#4fc3f7' },
+  { id: 'M27', name: 'M27 Dumbbell Bulutsusu', ra: 299.9, dec: 22.72, mag: 7.4, type: 'Gezegen Bulutsusu', icon: '💫', obs: 'binoculars', color: '#4fc3f7' },
+  { id: 'M44', name: 'M44 Arı Kovanı Kümesi', ra: 130.05, dec: 19.67, mag: 3.7, type: 'Açık Küme', icon: '🐝', obs: 'naked-eye', color: '#69f0ae' },
+  { id: 'Albireo', name: 'Albireo (Çift Yıldız)', ra: 292.68, dec: 27.96, mag: 3.1, type: 'Çift Yıldız', icon: '⭐', obs: 'binoculars', color: '#4fc3f7' },
+];
+
+const PLANET_META = {
+  mercury: { name: 'Merkür', icon: '🔴', obs: 'naked-eye', color: '#69f0ae', type: 'Gezegen', desc: 'Güneş\'e en yakın gezegen. Gün doğumundan önce ya da gün batımından sonra alçak irtifada görülür. Yüzeyi kraterlere sahip, atmosferi yoktur.' },
+  venus: { name: 'Venüs', icon: '🌟', obs: 'naked-eye', color: '#69f0ae', type: 'Gezegen', desc: 'Gökyüzünün en parlak cismi. Çıplak gözle kolayca görülür. Sabah ya da akşam yıldızı olarak bilinen Venüs, kalın bir CO₂ atmosferine sahiptir.' },
+  mars: { name: 'Mars', icon: '🔴', obs: 'naked-eye', color: '#69f0ae', type: 'Gezegen', desc: 'Kırmızı rengiyle tanınan Mars, çıplak gözle görülebilir. Dürbünle kırmızı diski seçilebilir. Teleskopla kutup buzulları gözlemlenebilir.' },
+  jupiter: { name: 'Jüpiter', icon: '🟠', obs: 'naked-eye', color: '#69f0ae', type: 'Gezegen', desc: 'Güneş sisteminin en büyük gezegeni. Dürbünle 4 Galileo uydusu görülebilir. Teleskopla bulut bantları ve Büyük Kırmızı Leke izlenebilir.' },
+  saturn: { name: 'Satürn', icon: '🪐', obs: 'naked-eye', color: '#69f0ae', type: 'Gezegen', desc: 'Halkalarıyla ünlü Satürn, çıplak gözle sarı renkte görülür. Teleskopla halkalar ve en büyük uydusu Titan gözlemlenebilir.' },
+  uranus: { name: 'Uranüs', icon: '🔵', obs: 'binoculars', color: '#4fc3f7', type: 'Gezegen', desc: 'Mavi-yeşil rengiyle ayrışan Uranüs, 5.7 parlaklık değeriyle karanlık gökyüzünde çıplak gözle sınırda görülebilir. Dürbünle rahatlıkla.' },
+  neptune: { name: 'Neptün', icon: '🔵', obs: 'telescope', color: '#b39ddb', type: 'Gezegen', desc: 'En uzak büyük gezegen. Çıplak gözle görülemez. Dürbünle yıldıza benzer; teleskopla mavi disk seçilebilir. Konumu bilmek gerekir.' },
+};
+
+const DSO_META = {
+  'M31': { desc: 'Samanyolu\'na en yakın büyük galaksi. Karanlık bir gecede çıplak gözle sis gibi görülür. 2.5 milyon ışık yılı uzakta.' },
+  'M42': { desc: 'Orion takımyıldızı\'nda parlak bulutsu. Kışın çıplak gözle seçilir, dürbünle muhteşem görünür. 1.344 ışık yılı uzakta.' },
+  'Pleiades': { desc: 'Boğa takımyıldızında 7 kız kardeş olarak bilinen açık küme. Çıplak gözle 6-7 yıldız, dürbünle onlarca yıldız görülür.' },
+  'M45': { desc: 'Hyades kümesi Boğa takımyıldızında en yakın açık küme (153 ışık yılı). V şeklini çıplak gözle görmek kolaydır.' },
+  'M13': { desc: 'Kuzey yarımküre\'nin en güzel küresel yıldız kümesi. Dürbünle sisli nokta, teleskopla bireysel yıldızlar seçilir.' },
+  'M57': { desc: 'Lir takımyıldızında halka şeklinde gezegen bulutsusu. Teleskop gerektirir. Küçük ama belirgin halka yapısıyla ünlüdür.' },
+  'M81': { desc: 'Büyükayı takımyıldızında parlak sarmal galaksi. Dürbünle hafif sis olarak görülür. 12 milyon ışık yılı uzakta.' },
+  'M27': { desc: 'Tilkicik takımyıldızında dumbbell (halter) şeklinde gezegen bulutsusu. Dürbünle görülebilen en kolay gezegen bulutsusudur.' },
+  'M44': { desc: 'Yengeç takımyıldızında geniş açık küme. Karanlık gecede çıplak gözle hafifçe seçilir, dürbünle olağanüstüdür.' },
+  'Albireo': { desc: 'Kuğu takımyıldızında sarı ve mavi renklerden oluşan en güzel çift yıldızlardan biri. Dürbünle bile renk farkı seçilir.' },
+};
+
+// =============================================
+// GLOBAL STATE
+// =============================================
+let STATE = {
+  lat: 40.76, lon: 30.36, date: new Date(),
+  jd: 0, sunTimes: {}, twilightAstro: {},
+  moonData: {}, planets: {}, bodies: [],
+  nightStart: 20, nightEnd: 6
+};
+
+// =============================================
+// STAR FIELD
+// =============================================
+(function() {
+  const c = document.getElementById('star-canvas');
+  const ctx = c.getContext('2d');
+  function resize() { c.width = window.innerWidth; c.height = window.innerHeight; drawStars(); }
+  function drawStars() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    const rng = (s) => { let x = Math.sin(s) * 43758.5453; return x - Math.floor(x); };
+    for (let i = 0; i < 350; i++) {
+      const x = rng(i * 7.1) * c.width;
+      const y = rng(i * 13.7) * c.height;
+      const r = rng(i * 3.3) * 1.4 + 0.2;
+      const a = rng(i * 5.9) * 0.7 + 0.15;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${a})`;
+      ctx.fill();
+    }
+  }
+  window.addEventListener('resize', resize);
+  resize();
+})();
+
+// =============================================
+// LIVE CLOCK
+// =============================================
+function updateClock() {
+  const now = new Date();
+  document.getElementById('live-time').textContent =
+    now.toLocaleString('tr-TR', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// =============================================
+// DATE INPUT INIT
+// =============================================
+const dateInput = document.getElementById('inp-date');
+const today = new Date();
+dateInput.value = today.toISOString().split('T')[0];
+
+// =============================================
+// MAIN CALCULATION
+// =============================================
+function recalculate() {
+  STATE.lat = parseFloat(document.getElementById('inp-lat').value);
+  STATE.lon = parseFloat(document.getElementById('inp-lon').value);
+  const dv = document.getElementById('inp-date').value;
+  STATE.date = dv ? new Date(dv + 'T12:00:00Z') : new Date();
+
+  STATE.jd = toJD(STATE.date);
+  STATE.sunTimes = sunriseSet(STATE.jd, STATE.lat, STATE.lon);
+  STATE.twilightAstro = twilight(STATE.jd, STATE.lat, STATE.lon, -18);
+  STATE.moonData = {
+    ...moonPhase(STATE.jd),
+    ...moonRiseSet(STATE.jd, STATE.lat, STATE.lon)
+  };
+  STATE.planets = planetPositions(STATE.jd);
+
+  // Night window: astronomical dusk to astronomical dawn
+  const nd = STATE.twilightAstro.dusk || STATE.sunTimes.set + 1.5;
+  const na = STATE.twilightAstro.dawn || STATE.sunTimes.rise - 1.5;
+  STATE.nightStart = Math.floor(nd);
+  STATE.nightEnd = Math.ceil(na);
+
+  // Build bodies list
+  STATE.bodies = buildBodies();
+
+  updateConditions();
+  drawMoon();
+  drawTimeline();
+  drawHorizon();
+  buildWeatherStrip();
+  buildObjectList();
+  buildInfoCards();
+}
+
+function buildBodies() {
+  const bodies = [];
+  const jd = STATE.jd;
+  const lat = STATE.lat, lon = STATE.lon;
+
+  // Planets
+  const pl = planetPositions(jd);
+  for (const [key, meta] of Object.entries(PLANET_META)) {
+    const p = pl[key];
+    const alts = [];
+    for (let h = 0; h < 24; h++) {
+      const jdH = jd + (h - 12) / 24;
+      const lst = sidereal(jdH, lon);
+      const pos = altAz(p.ra, p.dec, lat, lst);
+      alts.push({ h, alt: pos.alt });
+    }
+    const maxAlt = Math.max(...alts.map(a => a.alt));
+    bodies.push({ id: key, name: meta.name, type: meta.type, icon: meta.icon, obs: meta.obs, color: meta.color, mag: STATE.planets[key]?.mag || 1, alts, maxAlt, isPlanet: true });
+  }
+
+  // Deep sky
+  for (const dso of DEEP_SKY) {
+    const alts = [];
+    for (let h = 0; h < 24; h++) {
+      const jdH = jd + (h - 12) / 24;
+      const lst = sidereal(jdH, lon);
+      const pos = altAz(dso.ra, dso.dec, lat, lst);
+      alts.push({ h, alt: pos.alt });
+    }
+    const maxAlt = Math.max(...alts.map(a => a.alt));
+    bodies.push({ id: dso.id, name: dso.name, type: dso.type, icon: dso.icon, obs: dso.obs, color: dso.color, mag: dso.mag, alts, maxAlt, isPlanet: false });
+  }
+
+  // Moon
+  const md = STATE.moonData;
+  if (md.ra !== undefined) {
+    const alts = [];
+    for (let h = 0; h < 24; h++) {
+      const jdH = jd + (h - 12) / 24;
+      const lst = sidereal(jdH, lon);
+      const pos = altAz(md.ra, md.dec, lat, lst);
+      alts.push({ h, alt: pos.alt });
+    }
+    const maxAlt = Math.max(...alts.map(a => a.alt));
+    bodies.push({ id: 'moon', name: 'Ay', type: 'Doğal Uydu', icon: '🌙', obs: 'naked-eye', color: '#ffd54f', mag: -12.6, alts, maxAlt, isPlanet: false });
+  }
+
+  return bodies.filter(b => b.maxAlt > 5);
+}
+
+function hhmm(h) {
+  const hh = Math.floor(h) % 24;
+  const mm = Math.floor((h % 1) * 60);
+  return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+}
+
+function updateConditions() {
+  const mp = STATE.moonData;
+  const illum = Math.round(mp.illum * 100);
+  const moonEl = document.getElementById('c-moonphase');
+  moonEl.textContent = `%${illum}`;
+  moonEl.className = `cond-value ${illum < 25 ? 'good' : illum < 50 ? 'ok' : 'bad'}`;
+
+  // Simulated cloud (in production: fetch from API)
+  const cloud = simulateCloudCover();
+  const cloudEl = document.getElementById('c-cloud');
+  cloudEl.textContent = `%${cloud}`;
+  cloudEl.className = `cond-value ${cloud < 20 ? 'good' : cloud < 50 ? 'ok' : 'bad'}`;
+
+  const ss = STATE.sunTimes;
+  document.getElementById('c-sunset').textContent = ss.set ? hhmm(ss.set) : '—';
+  document.getElementById('c-sunrise').textContent = ss.rise ? hhmm(ss.rise) : '—';
+
+  const nd = STATE.twilightAstro.dusk || ss.set + 1.5;
+  const na = STATE.twilightAstro.dawn || ss.rise - 1.5;
+  const mid = ((nd + na + 24) / 2 + 24) % 24;
+  document.getElementById('c-besttime').textContent = hhmm(mid);
+  document.getElementById('c-besttime').parentElement.querySelector('.cond-value').className = 'cond-value good';
+
+  const seeing = simulateSeeing();
+  const seeEl = document.getElementById('c-seeing');
+  const seeLabels = ['', 'Mükemmel', 'Çok İyi', 'İyi', 'Orta', 'Kötü'];
+  seeEl.textContent = seeLabels[seeing] || '—';
+  seeEl.className = `cond-value ${seeing <= 2 ? 'good' : seeing <= 3 ? 'ok' : 'bad'}`;
+
+  document.getElementById('obs-window').textContent = `${hhmm(nd)} – ${hhmm(na)}`;
+}
+
+function simulateCloudCover() {
+  // Deterministic but varied per date/location
+  const seed = STATE.jd * 1000 + STATE.lat * 7 + STATE.lon * 3;
+  const s = Math.sin(seed) * 43758;
+  return Math.round(((s - Math.floor(s)) * 70));
+}
+
+function simulateSeeing() {
+  const seed = STATE.jd * 1337 + STATE.lat * 11;
+  const s = Math.sin(seed) * 9999;
+  return Math.round(((s - Math.floor(s)) * 4) + 1);
+}
+
+// =============================================
+// MOON DRAWING
+// =============================================
+function drawMoon() {
+  const mp = STATE.moonData;
+  const phase = mp.phase || 0;
+  const illum = mp.illum || 0;
+  const canvas = document.getElementById('moon-canvas-el');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const R = W / 2 - 2;
+  const cx = W / 2, cy = H / 2;
+  ctx.clearRect(0, 0, W, H);
+
+  // Dark side
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.fillStyle = '#1a2035';
+  ctx.fill();
+
+  // Lit side using clipping
+  ctx.save();
+  const isWaxing = phase < 0.5;
+  const phaseAngle = phase < 0.5 ? phase * 2 : (phase - 0.5) * 2;
+  const limb = (2 * phaseAngle - 1) * R;
+
+  ctx.beginPath();
+  if (isWaxing) {
+    ctx.arc(cx, cy, R, Math.PI / 2, -Math.PI / 2, false);
+    ctx.bezierCurveTo(cx + limb, cy - R, cx + limb, cy + R, cx, cy + R);
+  } else {
+    ctx.arc(cx, cy, R, Math.PI / 2, -Math.PI / 2, true);
+    ctx.bezierCurveTo(cx + limb, cy - R, cx + limb, cy + R, cx, cy + R);
+  }
+  ctx.fillStyle = '#d8e0f0';
+  ctx.fill();
+  ctx.restore();
+
+  // Craters
+  const craters = [{x:.3,y:.35,r:.08},{x:.6,y:.25,r:.06},{x:.45,y:.6,r:.1},{x:.7,y:.55,r:.05}];
+  craters.forEach(cr => {
+    ctx.beginPath();
+    ctx.arc(cx + (cr.x - 0.5) * 2 * R, cy + (cr.y - 0.5) * 2 * R, cr.r * R, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(180,190,210,0.15)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(180,190,210,0.1)';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  });
+
+  // Border
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Moon info
+  const phases = ['Yeni Ay', 'Hilal', 'İlk Dördün', 'Büyüyen Gibbous', 'Dolunay', 'Küçülen Gibbous', 'Son Dördün', 'Azalan Hilal'];
+  const pi = Math.round(phase * 8) % 8;
+  document.getElementById('moon-phase-name').textContent = phases[pi];
+  document.getElementById('moon-illum').textContent = `%${Math.round(illum * 100)}`;
+  document.getElementById('moon-rise').textContent = hhmm(mp.rise || 0);
+  document.getElementById('moon-set').textContent = hhmm(mp.set || 0);
+
+  const descs = {
+    'Yeni Ay': 'Gözlem için en ideal gece — Ay gökyüzünde yok.',
+    'Dolunay': 'Parlak ışık gözlemi olumsuz etkiler. Derin gökyüzü nesneleri zor.',
+    'İlk Dördün': 'Akşam gökyüzünde Ay bulunur, gece yarısında batar.',
+    'Son Dördün': 'Gece yarısından sonra Ay doğar. İlk yarı gece idealdir.',
+  };
+  document.getElementById('moon-phase-desc').textContent = descs[phases[pi]] || `Aydınlanma: %${Math.round(illum * 100)} — Gözlem koşulları ${illum < 0.3 ? 'iyi' : illum < 0.6 ? 'orta' : 'kısıtlı'}.`;
+}
+
+// =============================================
+// TIMELINE CANVAS
+// =============================================
+function drawTimeline() {
+  const canvas = document.getElementById('timeline-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.offsetWidth - 48;
+  canvas.width = W;
+  const H = 320;
+  const PAD = { top: 30, bottom: 40, left: 120, right: 20 };
+  const bodies = STATE.bodies.slice(0, 14);
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#0c1020';
+  ctx.roundRect(0, 0, W, H, 8);
+  ctx.fill();
+
+  const plotW = W - PAD.left - PAD.right;
+  const rowH = (H - PAD.top - PAD.bottom) / Math.max(bodies.length, 1);
+
+  // Twilight shading
+  const nd = (STATE.twilightAstro.dusk || STATE.sunTimes.set + 1.5) % 24;
+  const na = (STATE.twilightAstro.dawn || STATE.sunTimes.rise - 1.5 + 24) % 24;
+  function hToX(h) { return PAD.left + (h / 24) * plotW; }
+
+  // Night shading
+  ctx.fillStyle = 'rgba(15,20,50,0.8)';
+  if (nd < na) {
+    ctx.fillRect(hToX(nd), PAD.top, hToX(na) - hToX(nd), H - PAD.top - PAD.bottom);
+  } else {
+    ctx.fillRect(hToX(nd), PAD.top, hToX(24) - hToX(nd), H - PAD.top - PAD.bottom);
+    ctx.fillRect(hToX(0), PAD.top, hToX(na) - hToX(0), H - PAD.top - PAD.bottom);
+  }
+
+  // Twilight zones
+  ctx.fillStyle = 'rgba(255,213,79,0.06)';
+  const cs = STATE.sunTimes.set || 19;
+  const cr = STATE.sunTimes.rise || 5;
+  ctx.fillRect(hToX(cs), PAD.top, hToX(nd) - hToX(cs), H - PAD.top - PAD.bottom);
+  ctx.fillRect(hToX(na), PAD.top, hToX(cr) - hToX(na), H - PAD.top - PAD.bottom);
+
+  // Moon brightness overlay
+  if (STATE.moonData.illum > 0.3) {
+    const mr = STATE.moonData.rise || 22;
+    const ms = STATE.moonData.set || 10;
+    ctx.fillStyle = `rgba(255,82,82,${STATE.moonData.illum * 0.08})`;
+    if (mr > ms) {
+      ctx.fillRect(hToX(mr), PAD.top, hToX(24) - hToX(mr), H - PAD.top - PAD.bottom);
+      ctx.fillRect(hToX(0), PAD.top, hToX(ms) - hToX(0), H - PAD.top - PAD.bottom);
+    } else {
+      ctx.fillRect(hToX(mr), PAD.top, hToX(ms) - hToX(mr), H - PAD.top - PAD.bottom);
+    }
+  }
+
+  // Hour grid
+  for (let h = 0; h <= 24; h += 3) {
+    const x = hToX(h);
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, PAD.top);
+    ctx.lineTo(x, H - PAD.bottom);
+    ctx.stroke();
+    ctx.fillStyle = '#4a5a72';
+    ctx.font = '10px Space Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${String(h % 24).padStart(2, '0')}:00`, x, H - PAD.bottom + 14);
+  }
+
+  // Rows
+  bodies.forEach((body, i) => {
+    const y = PAD.top + i * rowH;
+    const cy = y + rowH / 2;
+
+    // Row separator
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(PAD.left, y + rowH);
+    ctx.lineTo(W - PAD.right, y + rowH);
+    ctx.stroke();
+
+    // Body name
+    ctx.fillStyle = '#7a8ba8';
+    ctx.font = '11px Space Grotesk, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(body.name.replace(/ .*/,''), PAD.left - 6, cy + 4);
+
+    // Visibility bar
+    const MIN_ALT = 10;
+    let prevAbove = false;
+    let segStart = -1;
+
+    for (let h = 0; h <= 24; h++) {
+      const above = body.alts[h % 24]?.alt > MIN_ALT;
+      if (above && !prevAbove) { segStart = h; }
+      if (!above && prevAbove && segStart >= 0) {
+        drawVisBar(ctx, body, hToX(segStart), hToX(h), cy, rowH * 0.55);
+        segStart = -1;
+      }
+      prevAbove = above;
+    }
+    if (prevAbove && segStart >= 0) drawVisBar(ctx, body, hToX(segStart), hToX(24), cy, rowH * 0.55);
+  });
+
+  // Axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(PAD.left, PAD.top);
+  ctx.lineTo(PAD.left, H - PAD.bottom);
+  ctx.lineTo(W - PAD.right, H - PAD.bottom);
+  ctx.stroke();
+
+  // Now line
+  const now = new Date();
+  const nowH = now.getHours() + now.getMinutes() / 60;
+  const nowX = hToX(nowH);
+  ctx.strokeStyle = '#4fc3f7';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(nowX, PAD.top);
+  ctx.lineTo(nowX, H - PAD.bottom);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#4fc3f7';
+  ctx.font = 'bold 10px Space Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('ŞİMDİ', nowX, PAD.top - 8);
+
+  // Mouse interaction
+  canvas.onmousemove = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const h = (mx - PAD.left) / plotW * 24;
+    if (h < 0 || h > 24) return;
+    const bodyI = Math.floor((my - PAD.top) / rowH);
+    if (bodyI >= 0 && bodyI < bodies.length) {
+      const body = bodies[bodyI];
+      const hFloor = Math.floor(h) % 24;
+      const alt = body.alts[hFloor]?.alt || 0;
+      document.getElementById('cursor-info').textContent =
+        `${hhmm(h)} — ${body.name} — İrtifa: ${alt.toFixed(1)}°`;
+    }
+  };
+  canvas.onmouseleave = () => { document.getElementById('cursor-info').textContent = 'Grafiğin üzerine gelin'; };
+}
+
+function drawVisBar(ctx, body, x1, x2, cy, halfH) {
+  if (x2 <= x1) return;
+  const colors = { 'naked-eye': '#69f0ae', 'binoculars': '#4fc3f7', 'telescope': '#b39ddb' };
+  const col = colors[body.obs] || '#4fc3f7';
+  ctx.fillStyle = col + '33';
+  ctx.beginPath();
+  ctx.roundRect(x1, cy - halfH / 2, x2 - x1, halfH, 3);
+  ctx.fill();
+  ctx.strokeStyle = col + '99';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+}
+
+// =============================================
+// HORIZON CHART
+// =============================================
+function drawHorizon() {
+  const canvas = document.getElementById('horizon-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.offsetWidth - 48;
+  canvas.width = W;
+  const H = 200;
+  const PAD = { top: 20, bottom: 30, left: 40, right: 20 };
+  const bodies = STATE.bodies.slice(0, 8);
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#0c1020';
+  ctx.roundRect(0, 0, W, H, 6);
+  ctx.fill();
+
+  const plotW = W - PAD.left - PAD.right;
+  const plotH = H - PAD.top - PAD.bottom;
+
+  // Y grid
+  for (let deg = 0; deg <= 90; deg += 30) {
+    const y = PAD.top + plotH - (deg / 90) * plotH;
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(PAD.left, y);
+    ctx.lineTo(W - PAD.right, y);
+    ctx.stroke();
+    ctx.fillStyle = '#4a5a72';
+    ctx.font = '9px Space Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(`${deg}°`, PAD.left - 4, y + 3);
+  }
+
+  // Horizon line
+  const horizY = PAD.top + plotH;
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 4]);
+  ctx.beginPath();
+  ctx.moveTo(PAD.left, horizY - (10 / 90) * plotH);
+  ctx.lineTo(W - PAD.right, horizY - (10 / 90) * plotH);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Hour labels
+  for (let h = 0; h <= 24; h += 6) {
+    const x = PAD.left + (h / 24) * plotW;
+    ctx.fillStyle = '#4a5a72';
+    ctx.font = '9px Space Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${String(h % 24).padStart(2,'0')}h`, x, H - 8);
+  }
+
+  // Body tracks
+  const colors = ['#69f0ae', '#4fc3f7', '#b39ddb', '#ffd54f', '#ffb74d', '#f48fb1', '#4dd0e1', '#ff5252'];
+  bodies.forEach((body, i) => {
+    ctx.beginPath();
+    let started = false;
+    for (let h = 0; h <= 24; h++) {
+      const alt = body.alts[h % 24]?.alt || -90;
+      const x = PAD.left + (h / 24) * plotW;
+      const y = PAD.top + plotH - (Math.max(0, Math.min(90, alt)) / 90) * plotH;
+      if (!started) { ctx.moveTo(x, y); started = true; }
+      else { ctx.lineTo(x, y); }
+    }
+    ctx.strokeStyle = colors[i % colors.length] + 'cc';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  });
+
+  // Now line
+  const nowH = new Date().getHours() + new Date().getMinutes() / 60;
+  const nowX = PAD.left + (nowH / 24) * plotW;
+  ctx.strokeStyle = '#4fc3f7';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(nowX, PAD.top);
+  ctx.lineTo(nowX, horizY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// =============================================
+// WEATHER STRIP
+// =============================================
+function buildWeatherStrip() {
+  const strip = document.getElementById('weather-strip');
+  strip.innerHTML = '';
+  const icons = ['☀️','🌤️','⛅','🌥️','☁️','🌧️'];
+  for (let h = 18; h <= 30; h++) {
+    const hour = h % 24;
+    const seed = STATE.jd * 777 + hour * 13;
+    const s = Math.sin(seed) * 9999;
+    const rand = (s - Math.floor(s));
+    const cloud = Math.round(rand * 80);
+    const iconI = Math.min(5, Math.floor(cloud / 20));
+    const seeing = Math.round(rand * 4) + 1;
+    const seeClass = `seeing-${seeing}`;
+    const seeLabels = ['','★★★★★','★★★★','★★★','★★','★'];
+
+    const div = document.createElement('div');
+    div.className = 'weather-hour';
+    div.innerHTML = `
+      <div class="wh-time">${String(hour).padStart(2,'0')}:00</div>
+      <div class="wh-icon">${icons[iconI]}</div>
+      <div class="wh-cloud">${cloud}%</div>
+      <div class="wh-seeing ${seeClass}">${seeLabels[seeing]}</div>
+    `;
+    strip.appendChild(div);
+  }
+}
+
+// =============================================
+// OBJECT LIST (SIDEBAR)
+// =============================================
+function buildObjectList() {
+  const list = document.getElementById('object-list');
+  list.innerHTML = '';
+  const now = new Date().getHours() + new Date().getMinutes() / 60;
+  const nd = (STATE.twilightAstro.dusk || STATE.sunTimes.set + 1.5) % 24;
+  const na = (STATE.twilightAstro.dawn || STATE.sunTimes.rise - 1.5 + 24) % 24;
+
+  const sorted = [...STATE.bodies].sort((a, b) => {
+    const aAlt = a.alts[Math.floor(now) % 24]?.alt || -90;
+    const bAlt = b.alts[Math.floor(now) % 24]?.alt || -90;
+    return bAlt - aAlt;
+  });
+
+  sorted.slice(0, 12).forEach(body => {
+    const currentAlt = body.alts[Math.floor(now) % 24]?.alt || -90;
+    const isVisible = currentAlt > 10;
+    const isSetting = currentAlt > 0 && currentAlt <= 10;
+
+    // Find visible window
+    const visHours = body.alts.filter(a => a.alt > 10).map(a => a.h);
+    const visStart = visHours.length ? hhmm(Math.min(...visHours)) : '—';
+    const visEnd = visHours.length ? hhmm(Math.max(...visHours)) : '—';
+
+    const item = document.createElement('div');
+    item.className = 'object-item';
+    item.innerHTML = `
+      <div class="obj-icon">${body.icon}</div>
+      <div style="flex:1">
+        <div class="obj-name">${body.name.length > 20 ? body.name.substring(0, 20) + '…' : body.name}</div>
+        <div class="obj-type">${body.type}</div>
+      </div>
+      <div class="obj-visibility">
+        <div class="obj-vis-time">${visStart}–${visEnd}</div>
+        <div class="obj-mag">İrtifa: ${currentAlt.toFixed(0)}°</div>
+      </div>
+      <div class="vis-dot ${isVisible ? 'visible' : isSetting ? 'setting' : 'below'}"></div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+// =============================================
+// INFO CARDS
+// =============================================
+function buildInfoCards() {
+  const container = document.getElementById('info-cards');
+  container.innerHTML = '';
+  const now = new Date().getHours() + new Date().getMinutes() / 60;
+  const nd = (STATE.twilightAstro.dusk || STATE.sunTimes.set + 1.5);
+  const na = (STATE.twilightAstro.dawn || STATE.sunTimes.rise - 1.5 + 24);
+
+  const allBodies = [...STATE.bodies];
+
+  // Only show top 8 most visible tonight
+  const topBodies = allBodies
+    .filter(b => b.maxAlt > 10)
+    .sort((a, b) => b.maxAlt - a.maxAlt)
+    .slice(0, 8);
+
+  topBodies.forEach(body => {
+    const visHours = body.alts.filter(a => a.alt > 10).map(a => a.h);
+    const nightVis = body.alts.filter(a => {
+      const h = a.h;
+      const inNight = (nd <= na) ? (h >= nd && h <= na) : (h >= nd || h <= na);
+      return a.alt > 10 && inNight;
+    });
+    const visPercent = Math.round((nightVis.length / 10) * 100);
+
+    const meta = body.isPlanet ? PLANET_META[body.id] : null;
+    const dsoMeta = !body.isPlanet && body.id !== 'moon' ? DSO_META[body.id] : null;
+
+    let desc = 'Bu gece gözlemlenebilir.';
+    if (meta) desc = meta.desc;
+    else if (dsoMeta) desc = dsoMeta.desc;
+    else if (body.id === 'moon') desc = getMoonDesc();
+
+    const obsIcon = { 'naked-eye': '👁️', 'binoculars': '🔭', 'telescope': '🌠' }[body.obs];
+    const obsLabel = { 'naked-eye': 'Çıplak Göz', 'binoculars': 'Dürbün', 'telescope': 'Teleskop' }[body.obs];
+
+    const iconBg = { 'naked-eye': 'rgba(105,240,174,0.1)', 'binoculars': 'rgba(79,195,247,0.1)', 'telescope': 'rgba(124,77,255,0.1)' }[body.obs];
+
+    const card = document.createElement('div');
+    card.className = 'info-card fade-in';
+    card.innerHTML = `
+      <div class="ic-header">
+        <div class="ic-icon" style="background:${iconBg}">${body.icon}</div>
+        <div class="ic-meta">
+          <div class="ic-name">${body.name}</div>
+          <div class="ic-type">${body.type}</div>
+          <div class="ic-tags">
+            <span class="tag ${body.obs}">${obsIcon} ${obsLabel}</span>
+            <span class="tag">Parlaklık: ${body.mag}</span>
+          </div>
+        </div>
+      </div>
+      <p class="ic-desc">${desc}</p>
+      <div class="ic-stats">
+        <div class="ic-stat">
+          <div class="ic-stat-label">Maks İrtifa</div>
+          <div class="ic-stat-val">${body.maxAlt.toFixed(1)}°</div>
+        </div>
+        <div class="ic-stat">
+          <div class="ic-stat-label">Gece Görünürlük</div>
+          <div class="ic-stat-val">${nightVis.length}s / gece</div>
+        </div>
+        <div class="ic-stat">
+          <div class="ic-stat-label">En İyi Saat</div>
+          <div class="ic-stat-val">${visHours.length ? hhmm(body.alts.reduce((m, a) => a.alt > m.alt ? a : m, body.alts[0]).h) : '—'}</div>
+        </div>
+        <div class="ic-stat">
+          <div class="ic-stat-label">Gözlem Aracı</div>
+          <div class="ic-stat-val">${obsLabel}</div>
+        </div>
+      </div>
+      <div class="ic-visibility-bar">
+        <div class="ic-vis-label">Gece boyunca görünürlük</div>
+        <div class="vis-bar">
+          <div class="vis-bar-fill" style="width:${Math.min(100, visPercent)}%"></div>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  if (topBodies.length === 0) {
+    container.innerHTML = '<div class="no-data">Bu gece görünür cisim bulunamadı.</div>';
+  }
+}
+
+function getMoonDesc() {
+  const illum = STATE.moonData.illum || 0;
+  if (illum < 0.1) return 'Yeni Ay dönemi. Gökyüzü karanlık, derin uzay gözlemi için ideal koşullar.';
+  if (illum < 0.4) return 'İnce hilal görünümlü Ay, gece erken saatlerde batar. Çoğu gece gözlem için uygundur.';
+  if (illum < 0.6) return 'Yarı Ay gözlemi için güzel detaylar sunar. Gece ortasına kadar gökyüzündedir.';
+  if (illum < 0.85) return 'Parlak Ay derin uzay gözlemini kısıtlar. Ay\'ın kendisi ve çift yıldızlar için idealdir.';
+  return 'Dolunay gecesi. Teleskopla kraterleri ve denizleri keşfedin. Derin uzay nesneleri için uygun değil.';
+}
+
+// =============================================
+// INIT
+// =============================================
+recalculate();
+window.addEventListener('resize', () => { drawTimeline(); drawHorizon(); });
+</script>
 </body>
-
 </html>

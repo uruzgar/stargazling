@@ -1,266 +1,261 @@
 {
-    "last_updated": "2026-06-09T23:17:17.693506",
+    "last_updated": "2026-06-10T23:26:10.120786",
     "location": "Sakarya, Adapazarı",
     "timeline": {
         "start": "18:00",
         "end": "06:00"
     },
     "moon_phase": {
-        "name": "Son Dördün",
-        "illumination": 34,
-        "angle": 289
+        "name": "Hilal (Son)",
+        "illumination": 24,
+        "angle": 302
     },
     "meteor_showers": [],
     "weather_hourly": [
         {
             "hour": "18:00",
-            "cloud": 100,
-            "visibility": 37480.0,
-            "humidity": 66
-        },
-        {
-            "hour": "19:00",
-            "cloud": 100,
-            "visibility": 38740.0,
+            "cloud": 37,
+            "visibility": 38120.0,
             "humidity": 63
         },
         {
-            "hour": "20:00",
-            "cloud": 100,
-            "visibility": 37860.0,
+            "hour": "19:00",
+            "cloud": 34,
+            "visibility": 37140.0,
             "humidity": 67
         },
         {
+            "hour": "20:00",
+            "cloud": 38,
+            "visibility": 34240.0,
+            "humidity": 73
+        },
+        {
             "hour": "21:00",
-            "cloud": 100,
-            "visibility": 33540.0,
-            "humidity": 76
+            "cloud": 25,
+            "visibility": 30880.0,
+            "humidity": 80
         },
         {
             "hour": "22:00",
-            "cloud": 100,
-            "visibility": 27100.0,
-            "humidity": 84
-        },
-        {
-            "hour": "23:00",
-            "cloud": 100,
-            "visibility": 22880.0,
+            "cloud": 35,
+            "visibility": 22920.0,
             "humidity": 88
         },
         {
+            "hour": "23:00",
+            "cloud": 51,
+            "visibility": 18600.0,
+            "humidity": 91
+        },
+        {
             "hour": "00:00",
-            "cloud": 100,
-            "visibility": 20120.0,
-            "humidity": 90
+            "cloud": 59,
+            "visibility": 14700.0,
+            "humidity": 93
         },
         {
             "hour": "01:00",
-            "cloud": 100,
-            "visibility": 19640.0,
-            "humidity": 90
+            "cloud": 69,
+            "visibility": 11180.0,
+            "humidity": 95
         },
         {
             "hour": "02:00",
-            "cloud": 100,
-            "visibility": 18300.0,
-            "humidity": 91
+            "cloud": 75,
+            "visibility": 7380.0,
+            "humidity": 98
         },
         {
             "hour": "03:00",
-            "cloud": 99,
-            "visibility": 17520.0,
-            "humidity": 91
+            "cloud": 81,
+            "visibility": 1860.0,
+            "humidity": 100
         },
         {
             "hour": "04:00",
-            "cloud": 100,
-            "visibility": 16680.0,
-            "humidity": 92
+            "cloud": 84,
+            "visibility": 60.0,
+            "humidity": 100
         },
         {
             "hour": "05:00",
-            "cloud": 74,
-            "visibility": 12700.0,
-            "humidity": 94
+            "cloud": 93,
+            "visibility": 40.0,
+            "humidity": 100
         },
         {
             "hour": "06:00",
-            "cloud": 79,
-            "visibility": 7400.0,
-            "humidity": 96
+            "cloud": 91,
+            "visibility": 1460.0,
+            "humidity": 100
         }
     ],
     "objects": [
         {
             "name": "Ay",
             "type": "moon",
-            "rise": "02:16",
-            "set": "15:05",
+            "rise": "02:46",
+            "set": "16:19",
             "visible": true,
             "altitude_graph": [
-                -38.9,
-                -44.0,
-                -45.6,
-                -43.4,
-                -37.9,
-                -30.0,
-                -20.5,
-                -10.1,
-                0.9,
-                12.1,
-                23.2,
-                33.9,
-                43.6
+                -27.9,
+                -34.5,
+                -38.4,
+                -39.1,
+                -36.4,
+                -30.8,
+                -23.0,
+                -13.8,
+                -3.6,
+                7.3,
+                18.4,
+                29.6,
+                40.4
             ],
-            "distance_km": "379.212"
+            "distance_km": "373.566"
         },
         {
             "name": "Merkür",
             "type": "planet",
-            "rise": "07:07",
-            "set": "22:17",
+            "rise": "07:09",
+            "set": "22:18",
             "visible": true,
             "altitude_graph": [
-                45.7,
-                34.4,
-                23.2,
-                12.4,
-                2.2,
-                -7.0,
+                45.9,
+                34.5,
+                23.3,
+                12.5,
+                2.3,
+                -6.9,
                 -14.7,
-                -20.5,
-                -23.9,
-                -24.5,
-                -22.1,
-                -17.1,
-                -10.0
+                -20.6,
+                -24.1,
+                -24.7,
+                -22.4,
+                -17.5,
+                -10.4
             ],
-            "distance_km": "139.158.701"
+            "distance_km": "136.344.881"
         },
         {
             "name": "Venüs",
             "type": "planet",
-            "rise": "08:11",
+            "rise": "08:13",
             "set": "23:07",
             "visible": true,
             "altitude_graph": [
-                55.4,
+                55.5,
                 44.4,
-                33.0,
-                21.8,
-                10.9,
+                33.1,
+                21.9,
+                11.0,
                 0.7,
                 -8.6,
-                -16.4,
-                -22.3,
-                -25.7,
-                -26.1,
-                -23.6,
-                -18.4
+                -16.5,
+                -22.4,
+                -25.9,
+                -26.4,
+                -23.9,
+                -18.7
             ],
-            "distance_km": "178.980.854"
+            "distance_km": "177.945.478"
         },
         {
             "name": "Mars",
             "type": "planet",
-            "rise": "03:38",
+            "rise": "03:36",
             "set": "17:42",
             "visible": true,
             "altitude_graph": [
-                -3.5,
-                -13.4,
+                -3.6,
+                -13.3,
                 -21.8,
-                -28.4,
-                -32.2,
-                -32.9,
-                -30.2,
-                -24.6,
-                -16.8,
-                -7.4,
-                3.0,
-                14.0,
-                25.3
+                -28.3,
+                -32.1,
+                -32.7,
+                -29.9,
+                -24.3,
+                -16.5,
+                -7.1,
+                3.3,
+                14.3,
+                25.6
             ],
-            "distance_km": "323.650.253"
+            "distance_km": "323.286.339"
         },
         {
             "name": "Jüpiter",
             "type": "planet",
-            "rise": "08:10",
-            "set": "22:56",
+            "rise": "08:07",
+            "set": "22:53",
             "visible": true,
             "altitude_graph": [
-                54.3,
-                43.3,
-                32.0,
-                20.7,
-                9.7,
-                -0.6,
-                -10.0,
-                -18.0,
-                -23.9,
-                -27.3,
+                53.7,
+                42.7,
+                31.4,
+                20.1,
+                9.1,
+                -1.2,
+                -10.5,
+                -18.3,
+                -24.2,
+                -27.4,
                 -27.6,
-                -24.9,
-                -19.4
+                -24.7,
+                -19.1
             ],
-            "distance_km": "904.635.542"
+            "distance_km": "906.077.903"
         },
         {
             "name": "Satürn",
             "type": "planet",
-            "rise": "02:19",
-            "set": "14:47",
+            "rise": "02:15",
+            "set": "14:44",
             "visible": true,
             "altitude_graph": [
-                -33.4,
-                -40.9,
-                -45.4,
-                -45.9,
-                -42.3,
-                -35.4,
-                -26.4,
-                -16.0,
-                -4.9,
-                6.4,
-                17.7,
-                28.6,
-                38.5
+                -33.9,
+                -41.3,
+                -45.5,
+                -45.8,
+                -42.0,
+                -34.9,
+                -25.7,
+                -15.3,
+                -4.2,
+                7.1,
+                18.4,
+                29.3,
+                39.1
             ],
-            "distance_km": "1.471.263.521"
+            "distance_km": "1.468.983.890"
         }
     ],
     "iss_passes": [
         {
-            "start": "07:23",
-            "max_elev": 16,
-            "end": "07:27"
+            "start": "08:05",
+            "max_elev": 78,
+            "end": "08:12"
         },
         {
-            "start": "08:58",
-            "max_elev": 54,
-            "end": "09:05"
+            "start": "09:43",
+            "max_elev": 20,
+            "end": "09:48"
         },
         {
-            "start": "10:36",
-            "max_elev": 15,
-            "end": "10:40"
+            "start": "11:21",
+            "max_elev": 12,
+            "end": "11:24"
         },
         {
-            "start": "12:14",
-            "max_elev": 13,
-            "end": "12:17"
+            "start": "12:57",
+            "max_elev": 20,
+            "end": "13:03"
         },
         {
-            "start": "13:50",
-            "max_elev": 29,
-            "end": "13:56"
-        },
-        {
-            "start": "15:26",
-            "max_elev": 34,
-            "end": "15:32"
+            "start": "14:33",
+            "max_elev": 71,
+            "end": "14:40"
         }
     ],
     "lists": {
